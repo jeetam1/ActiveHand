@@ -1,0 +1,127 @@
+.foot {
+  background: var(--dark-bg);
+  color: #fff;
+  padding: 55px 0 0;
+}
+
+.foot-inner {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 40px;
+  display: grid;
+  grid-template-columns: 1.15fr 0.9fr 0.9fr 1.15fr;
+  gap: 36px;
+  padding-bottom: 40px;
+}
+
+/* Brand/Logo */
+.foot-brand {
+  display: flex;
+  align-items: center;
+}
+
+.foot-brand-img {
+  height: 95px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* Links column */
+.foot-col {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.foot-heading {
+  font-family: var(--font-hand);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.8px;
+  margin-bottom: 8px;
+}
+
+.foot-col a {
+  font-family: var(--font-hand);
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.82);
+  transition: color 0.15s;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(255, 255, 255, 0.25);
+}
+
+.foot-col a:hover {
+  color: var(--orange);
+  text-decoration-color: var(--orange);
+}
+
+/* Social */
+.foot-social {
+  position: relative;
+}
+
+.foot-icons {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.foot-icon-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.foot-icon-circle:hover {
+  background: var(--orange);
+  border-color: var(--orange);
+  transform: translateY(-2px);
+}
+
+.foot-reader {
+  height: 90px;
+  width: auto;
+  position: absolute;
+  bottom: -15px;
+  right: 0;
+  object-fit: contain;
+}
+
+/* Copyright */
+.foot-copy {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 18px 40px;
+  text-align: center;
+}
+
+.foot-copy p {
+  font-family: var(--font-hand);
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+@media (max-width: 900px) {
+  .foot-inner {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+}
+
+@media (max-width: 600px) {
+  .foot-inner {
+    grid-template-columns: 1fr;
+  }
+  .foot-reader {
+    position: static;
+    margin-top: 14px;
+  }
+}
+

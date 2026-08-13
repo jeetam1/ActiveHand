@@ -1,0 +1,120 @@
+.feat {
+  padding: 70px 0 85px;
+  background: var(--white);
+}
+
+.feat-inner {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 48px;
+}
+
+/* Heading */
+.feat-heading {
+  font-family: var(--font-hand);
+  font-size: 2.9rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 56px;
+  letter-spacing: -0.3px;
+}
+
+.feat-orange {
+  color: var(--orange);
+  position: relative;
+  display: inline-block;
+}
+
+.feat-orange::after {
+  content: '';
+  position: absolute;
+  left: -2px;
+  right: -2px;
+  bottom: 0px;
+  height: 5px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 10' preserveAspectRatio='none'%3E%3Cpath d='M2 5 Q30 9 60 4 T98 6' stroke='%23ED612B' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center/100% 100%;
+}
+
+.feat-dash {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Grid */
+.feat-grid {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.feat-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.feat-img-wrap {
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.feat-mascot {
+  max-height: 175px;
+  max-width: 200px;
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.25s ease;
+}
+
+.feat-col:hover .feat-mascot {
+  transform: translateY(-4px) scale(1.05);
+}
+
+.feat-desc {
+  font-family: var(--font-hand);
+  font-size: 1.25rem;
+  color: #3A3A3A;
+  line-height: 1.35;
+  max-width: 280px;
+}
+
+/* Vertical divider */
+.feat-divider {
+  width: 1.5px;
+  background: #E8E8E8;
+  align-self: stretch;
+  margin: 10px 0;
+}
+
+@media (max-width: 900px) {
+  .feat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px 20px;
+  }
+  .feat-divider { display: none; }
+  .feat-heading { font-size: 2.2rem; gap: 8px; }
+  .feat-col { padding: 0 10px; }
+}
+
+@media (max-width: 600px) {
+  .feat-grid {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+  .feat-heading { font-size: 1.8rem; }
+}
+

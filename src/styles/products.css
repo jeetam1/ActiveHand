@@ -1,0 +1,228 @@
+.kits {
+  padding: 50px 0 75px;
+  background: var(--white);
+  position: relative;
+  overflow: hidden;
+}
+
+.kits-outer-star-left {
+  position: absolute;
+  top: 45%;
+  left: 3%;
+  width: 28px;
+  height: auto;
+  opacity: 0.85;
+}
+
+.kits-inner {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 40px;
+  position: relative;
+}
+
+/* Header */
+.kits-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 52px;
+  position: relative;
+}
+
+.kits-title {
+  font-family: var(--font-hand);
+  font-size: 2.9rem;
+  font-weight: 700;
+  color: var(--black);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  letter-spacing: -0.3px;
+}
+
+.kits-title-dash {
+  display: inline-flex;
+  align-items: center;
+}
+
+.kits-pencil {
+  position: absolute;
+  top: -10px;
+  right: 60px;
+  width: 48px;
+  height: auto;
+  transform: rotate(15deg);
+  animation: pencilWiggle 6s ease-in-out infinite;
+}
+
+@keyframes pencilWiggle {
+  0%, 100% { transform: rotate(15deg) translateY(0); }
+  50% { transform: rotate(18deg) translateY(-4px); }
+}
+
+/* Card Grid */
+.kits-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+  margin-bottom: 50px;
+}
+
+/* Individual Card - Paper/Polaroid frame */
+.kit-card {
+  background: var(--white);
+  border: 2px solid #1A1A1A;
+  border-radius: 4px;
+  padding: 24px 16px 20px;
+  position: relative;
+  text-align: center;
+  box-shadow: 4px 6px 0px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.kit-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 6px 10px 0px rgba(0, 0, 0, 0.09);
+}
+
+.kit-card-even {
+  transform: rotate(-0.4deg);
+}
+
+.kit-card-odd {
+  transform: rotate(0.4deg);
+}
+
+.kit-card-even:hover, .kit-card-odd:hover {
+  transform: translateY(-5px) rotate(0deg);
+}
+
+/* Orange tape at top of card */
+.kit-tape {
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-1.5deg);
+  width: 70px;
+  height: 20px;
+  background: var(--orange);
+  opacity: 0.95;
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  z-index: 3;
+}
+
+/* Lightning doodle above Monster Pen Stand */
+.kit-lightning {
+  position: absolute;
+  top: -38px;
+  right: 12px;
+  z-index: 4;
+}
+
+/* Product image */
+.kit-img-box {
+  width: 100%;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  padding: 8px;
+}
+
+.kit-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transition: transform 0.25s ease;
+}
+
+.kit-card:hover .kit-img {
+  transform: scale(1.05);
+}
+
+/* Title and price */
+.kit-name {
+  font-family: var(--font-hand);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--black);
+  line-height: 1.15;
+  margin-bottom: 8px;
+}
+
+.kit-diy-sub {
+  font-size: 1.25rem;
+  color: #222;
+}
+
+.kit-price {
+  font-family: var(--font-hand);
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: var(--orange);
+  display: block;
+}
+
+/* Star in bottom corner */
+.kit-star-corner {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  width: 20px;
+  height: auto;
+  opacity: 0.85;
+}
+
+/* View All Button */
+.kits-cta {
+  display: flex;
+  justify-content: center;
+}
+
+.kits-btn {
+  background: var(--black);
+  color: #fff;
+  font-family: var(--font-hand);
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 13px 36px;
+  border-radius: 30px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.kits-btn:hover {
+  background: #2D2D2D;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .kits-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px 24px;
+    max-width: 640px;
+    margin: 0 auto 48px;
+  }
+  .kits-pencil { right: 20px; }
+}
+
+@media (max-width: 600px) {
+  .kits { padding: 40px 0 60px; }
+  .kits-grid { grid-template-columns: 1fr; max-width: 290px; }
+  .kits-title { font-size: 2.1rem; }
+  .kits-pencil { width: 36px; top: -15px; right: 5px; }
+}
+

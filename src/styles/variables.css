@@ -1,0 +1,22 @@
+:root {
+  /* Brand Colors - exact from reference */
+  --orange: #ED612B;
+  --orange-hover: #D94F1A;
+  --orange-light: #FFF0EB;
+  --black: #1A1A1A;
+  --white: #FFFFFF;
+  --off-white: #FAFAFA;
+  --dark-bg: #111111;
+
+  /* Notebook */
+  --line-blue: #D8E0EC;
+  --margin-red: #F5A9A9;
+
+  /* Typography */
+  --font-hand: 'Patrick Hand', 'Comic Neue', cursive;
+  --font-body: 'Comic Neue', 'Patrick Hand', sans-serif;
+
+  /* Layout */
+  --max-w: 1240px;
+  --nav-h: 88px;
+}

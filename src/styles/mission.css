@@ -1,0 +1,67 @@
+.mission-section {
+  padding: 90px 24px;
+  background-color: var(--color-bg-white);
+  text-align: center;
+}
+
+.mission-container {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.mission-title {
+  font-family: var(--font-heading);
+  color: var(--color-teal);
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 32px;
+  letter-spacing: -0.02em;
+}
+
+.mission-text {
+  font-family: var(--font-body);
+  font-size: 1.15rem;
+  color: var(--color-text-body);
+  line-height: 1.7;
+  margin-bottom: 40px;
+}
+
+.mission-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-heading);
+  color: var(--color-primary);
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.mission-link:hover {
+  color: var(--color-primary-hover);
+  transform: translateX(4px);
+}
+
+.mission-link svg {
+  transition: transform var(--transition-fast);
+}
+
+.mission-link:hover svg {
+  transform: translateX(4px);
+}
+
+@media (max-width: 768px) {
+  .mission-section {
+    padding: 60px 20px;
+  }
+  .mission-title {
+    font-size: 2.3rem;
+  }
+  .mission-text {
+    font-size: 1.05rem;
+  }
+  .mission-link {
+    font-size: 1.1rem;
+  }
+}

@@ -1,0 +1,78 @@
+@import './variables.css';
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--white);
+  color: #333;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+img, video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-hand);
+  color: var(--black);
+  line-height: 1.2;
+}
+
+/* Notebook paper background utility */
+.notebook-bg {
+  background-color: var(--white);
+  background-image:
+    linear-gradient(var(--line-blue) 1px, transparent 1px);
+  background-size: 100% 32px;
+  background-position: 0 0;
+}
+
+/* Torn paper bottom edge */
+.torn-bottom::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 28px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 30' preserveAspectRatio='none'%3E%3Cpath d='M0,0 L0,18 Q20,28 40,16 T80,22 T120,14 T160,24 T200,12 T240,26 T280,10 T320,24 T360,14 T400,28 T440,12 T480,24 T520,10 T560,26 T600,14 T640,28 T680,12 T720,22 T760,10 T800,26 T840,14 T880,24 T920,12 T960,28 T1000,14 T1040,24 T1080,10 T1120,26 T1160,14 T1200,24 T1240,12 T1280,28 T1320,14 T1360,24 T1400,10 T1440,20 L1440,0 Z' fill='%23FFFFFF'/%3E%3C/svg%3E") no-repeat bottom/100% 28px;
+  z-index: 5;
+}
+
+/* Torn paper top edge (orange section) */
+.torn-top::before {
+  content: '';
+  position: absolute;
+  top: -26px;
+  left: 0;
+  width: 100%;
+  height: 28px;
+  background: url("/assets/torn_top.svg") no-repeat top center / 100% 28px;
+  z-index: 1;
+  pointer-events: none;
+}

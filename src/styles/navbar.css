@@ -1,0 +1,140 @@
+.nav-bar {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  background: var(--white);
+  border-bottom: 1.5px solid #EAEAEA;
+  z-index: 1000;
+  transition: box-shadow 0.2s;
+}
+
+.nav-bar.nav-scrolled {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.nav-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  height: var(--nav-h);
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Logo */
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-logo-img {
+  height: 64px;
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.2s ease;
+}
+
+.nav-logo:hover .nav-logo-img {
+  transform: scale(1.03);
+}
+
+/* Nav Links */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+}
+
+.nav-link {
+  font-family: var(--font-hand);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--black);
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+  padding: 6px 2px;
+}
+
+.nav-link:hover, .nav-link.nav-active {
+  color: var(--orange);
+}
+
+/* Right icons */
+.nav-icons {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-icon-btn {
+  color: var(--black);
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s, transform 0.15s;
+}
+
+.nav-icon-btn:hover {
+  color: var(--orange);
+  transform: translateY(-1px);
+}
+
+.cart-icon {
+  position: relative;
+}
+
+.cart-count {
+  position: absolute;
+  top: -2px;
+  right: -4px;
+  background: var(--orange);
+  color: #fff;
+  font-family: var(--font-hand);
+  font-size: 0.75rem;
+  font-weight: 700;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--white);
+}
+
+/* Hamburger */
+.nav-hamburger {
+  display: none;
+  color: var(--black);
+  padding: 4px;
+}
+
+/* Mobile */
+.nav-mobile {
+  display: none;
+  flex-direction: column;
+  background: var(--white);
+  padding: 16px 32px 24px;
+  border-top: 1px solid #eee;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.nav-mobile-link {
+  font-family: var(--font-hand);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--black);
+  padding: 10px 0;
+  border-bottom: 1px dashed #ddd;
+}
+
+@media (max-width: 900px) {
+  .nav-links { display: none; }
+  .nav-hamburger { display: block; }
+  .nav-mobile { display: flex; }
+}
+
