@@ -11,6 +11,28 @@ from .serializers import (
     WishlistItemSerializer, OrderSerializer
 )
 
+class ApiRootView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        return Response({
+            'status': 'online',
+            'message': 'ActiveHands Backend API is running with Supabase PostgreSQL 🚀',
+            'database': 'PostgreSQL (Supabase Cloud)',
+            'endpoints': {
+                'products': '/api/products/',
+                'auth_register': '/api/auth/register/',
+                'auth_login': '/api/auth/login/',
+                'auth_logout': '/api/auth/logout/',
+                'auth_me': '/api/auth/me/',
+                'cart': '/api/cart/',
+                'wishlist': '/api/wishlist/',
+                'orders': '/api/orders/',
+                'addresses': '/api/addresses/',
+                'admin_panel': '/admin/',
+            }
+        })
+
 class RegisterView(APIView):
     permission_classes = [permissions.AllowAny]
 
