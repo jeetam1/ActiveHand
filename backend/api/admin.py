@@ -74,7 +74,7 @@ class OrderItemInline(admin.TabularInline):
 class OrderAdmin(admin.ModelAdmin):
     list_display = (
         'order_badge',
-        'status_pill',
+        'status',
         'customer_info',
         'items_count',
         'formatted_total',
@@ -82,6 +82,7 @@ class OrderAdmin(admin.ModelAdmin):
         'formatted_date',
         'quick_actions'
     )
+    list_editable = ('status',)
     list_filter = ('status', 'payment_method', 'created_at')
     search_fields = ('order_number', 'shipping_name', 'shipping_phone', 'shipping_city', 'shipping_pincode', 'user__email')
     readonly_fields = ('order_number', 'created_at', 'points_earned', 'whatsapp_direct_link', 'google_maps_link')
