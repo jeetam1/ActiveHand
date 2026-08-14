@@ -1,0 +1,164 @@
+{% extends "admin/index.html" %}
+{% load i18n static %}
+
+{% block content %}
+<div style="margin-bottom: 28px;">
+  <!-- Welcome Banner -->
+  <div style="background: linear-gradient(135deg, #00676A 0%, #004D4F 100%); color: #FFFFFF; padding: 24px 28px; border-radius: 14px; margin-bottom: 24px; box-shadow: 0 4px 14px rgba(0, 103, 106, 0.2); display: flex; justify-content: space-between; align-items: center; border-left: 6px solid #ED612B;">
+    <div>
+      <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.8rem; font-weight: 800; margin: 0 0 6px 0; color: #FFFFFF;">
+        Welcome to ActiveHand Studio Console 👋
+      </h2>
+      <p style="margin: 0; font-size: 1rem; opacity: 0.9; font-family: 'Plus Jakarta Sans', sans-serif;">
+        Live dispatch hub, customer order tracking, and store inventory connected to Supabase PostgreSQL.
+      </p>
+    </div>
+    <div style="display: flex; gap: 10px;">
+      <a href="{% url 'admin:api_order_changelist' %}" class="button" style="background: #ED612B !important; color: #FFF; font-weight: 700; text-decoration: none; padding: 10px 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+        📦 View Live Orders
+      </a>
+      <a href="{% url 'admin:api_product_add' %}" class="button" style="background: #FFFFFF !important; color: #00676A !important; font-weight: 700; text-decoration: none; padding: 10px 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+        ➕ Add New Craft Kit
+      </a>
+    </div>
+  </div>
+
+  <!-- KPI Metrics Grid -->
+  {% if metrics %}
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 28px;">
+    <!-- Metric 1: Total Revenue -->
+    <div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 18px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display: flex; align-items: center; gap: 16px;">
+      <div style="width: 48px; height: 48px; border-radius: 10px; background: #FFF0EB; color: #ED612B; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+        💰
+      </div>
+      <div>
+        <span style="font-size: 0.85rem; color: #718096; font-weight: 600; text-transform: uppercase;">Total Sales</span>
+        <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 800; color: #00676A; margin: 2px 0 0 0;">
+          {{ metrics.total_revenue }}
+        </h3>
+      </div>
+    </div>
+
+    <!-- Metric 2: Total Orders -->
+    <div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 18px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display: flex; align-items: center; gap: 16px;">
+      <div style="width: 48px; height: 48px; border-radius: 10px; background: #E0F2F1; color: #00695C; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+        📦
+      </div>
+      <div>
+        <span style="font-size: 0.85rem; color: #718096; font-weight: 600; text-transform: uppercase;">Total Orders</span>
+        <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 800; color: #1A1A1A; margin: 2px 0 0 0;">
+          {{ metrics.total_orders }} Orders
+        </h3>
+      </div>
+    </div>
+
+    <!-- Metric 3: Pending Shipments -->
+    <div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 18px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display: flex; align-items: center; gap: 16px;">
+      <div style="width: 48px; height: 48px; border-radius: 10px; background: #FFF3E0; color: #E65100; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+        🚚
+      </div>
+      <div>
+        <span style="font-size: 0.85rem; color: #718096; font-weight: 600; text-transform: uppercase;">Active Shipments</span>
+        <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 800; color: #ED612B; margin: 2px 0 0 0;">
+          {{ metrics.pending_orders }} To Dispatch
+        </h3>
+      </div>
+    </div>
+
+    <!-- Metric 4: Total Craft Kits -->
+    <div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 18px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display: flex; align-items: center; gap: 16px;">
+      <div style="width: 48px; height: 48px; border-radius: 10px; background: #EDE7F6; color: #512DA8; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+        🎨
+      </div>
+      <div>
+        <span style="font-size: 0.85rem; color: #718096; font-weight: 600; text-transform: uppercase;">Catalog Kits</span>
+        <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 800; color: #1A1A1A; margin: 2px 0 0 0;">
+          {{ metrics.total_products }} Kits
+        </h3>
+      </div>
+    </div>
+
+    <!-- Metric 5: Registered Makers -->
+    <div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 18px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display: flex; align-items: center; gap: 16px;">
+      <div style="width: 48px; height: 48px; border-radius: 10px; background: #E8F5E9; color: #2E7D32; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+        🌟
+      </div>
+      <div>
+        <span style="font-size: 0.85rem; color: #718096; font-weight: 600; text-transform: uppercase;">Registered Makers</span>
+        <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 800; color: #00676A; margin: 2px 0 0 0;">
+          {{ metrics.total_makers }} Makers
+        </h3>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Recent Orders Table -->
+  {% if metrics.recent_orders %}
+  <div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 28px; overflow: hidden;">
+    <div style="padding: 16px 20px; background: #FAF8F5; border-bottom: 1.5px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center;">
+      <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 800; color: #00676A; margin: 0; display: flex; align-items: center; gap: 8px;">
+        <span>🛍️ Recent Customer Orders</span>
+      </h3>
+      <a href="{% url 'admin:api_order_changelist' %}" style="color: #ED612B; font-weight: 700; font-size: 0.9rem; text-decoration: none;">
+        View All Orders &rarr;
+      </a>
+    </div>
+
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.95rem;">
+        <thead>
+          <tr style="background: #F7FAFC; border-bottom: 2px solid #E2E8F0;">
+            <th style="padding: 12px 16px; font-weight: 700; color: #4A5568;">Order ID</th>
+            <th style="padding: 12px 16px; font-weight: 700; color: #4A5568;">Customer Name</th>
+            <th style="padding: 12px 16px; font-weight: 700; color: #4A5568;">Phone / WhatsApp</th>
+            <th style="padding: 12px 16px; font-weight: 700; color: #4A5568;">City & Pincode</th>
+            <th style="padding: 12px 16px; font-weight: 700; color: #4A5568;">Total</th>
+            <th style="padding: 12px 16px; font-weight: 700; color: #4A5568;">Status</th>
+            <th style="padding: 12px 16px; font-weight: 700; color: #4A5568;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for ord in metrics.recent_orders %}
+          <tr style="border-bottom: 1px solid #EDF2F7; transition: background 0.15s;">
+            <td style="padding: 12px 16px; font-weight: 800; font-family: 'Outfit', sans-serif; color: #00676A;">
+              <a href="{% url 'admin:api_order_change' ord.id %}" style="color: #00676A; text-decoration: none;">
+                #{{ ord.order_number }}
+              </a>
+            </td>
+            <td style="padding: 12px 16px; font-weight: 600; color: #1A1A1A;">
+              {{ ord.shipping_name }}
+            </td>
+            <td style="padding: 12px 16px;">
+              <a href="https://wa.me/{{ ord.shipping_phone|cut:' '|cut:'+'|cut:'-' }}" target="_blank" style="display: inline-flex; align-items: center; gap: 4px; color: #25D366; font-weight: 700; text-decoration: none;" title="Chat on WhatsApp">
+                💬 {{ ord.shipping_phone }}
+              </a>
+            </td>
+            <td style="padding: 12px 16px; color: #4A5568;">
+              {{ ord.shipping_city }} ({{ ord.shipping_pincode }})
+            </td>
+            <td style="padding: 12px 16px; font-weight: 800; color: #ED612B; font-family: 'Outfit', sans-serif;">
+              {{ ord.total_amount }}
+            </td>
+            <td style="padding: 12px 16px;">
+              <span class="badge-status {% if 'Delivered' in ord.status %}badge-delivered{% elif 'Transit' in ord.status %}badge-transit{% elif 'Processing' in ord.status %}badge-processing{% else %}badge-confirmed{% endif %}">
+                {{ ord.status }}
+              </span>
+            </td>
+            <td style="padding: 12px 16px;">
+              <a href="{% url 'admin:api_order_change' ord.id %}" style="background: #00676A; color: #FFF; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 700; text-decoration: none;">
+                Inspect 👁️
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Standard App Lists -->
+{{ block.super }}
+{% endblock %}
