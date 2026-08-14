@@ -5,7 +5,7 @@ import { useAuth } from './AuthContext';
 const CartContext = createContext();
 
 export function CartProvider({ children }) {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const [cart, setCart] = useState(() => {
     try {
@@ -29,7 +29,6 @@ export function CartProvider({ children }) {
   const fetchBackendCart = useCallback(async () => {
     if (!isAuthenticated) return;
     try {
-      // If there are guest items in localStorage, sync them first
       const saved = localStorage.getItem('activehands_cart');
       const localItems = saved ? JSON.parse(saved) : [];
       if (localItems.length > 0) {
@@ -67,16 +66,28 @@ export function CartProvider({ children }) {
     }
   }, [isAuthenticated]);
 
+  // When user logs in fetch their cart, when logged out reset cart completely
   useEffect(() => {
     if (isAuthenticated) {
       fetchBackendCart();
+    } else {
+      setCart([]);
+      try {
+        localStorage.removeItem('activehands_cart');
+      } catch (e) {
+        console.error(e);
+      }
     }
   }, [isAuthenticated, fetchBackendCart]);
 
-  // Persist to localStorage for guests / offline cache
+  // Persist to localStorage only when items exist
   useEffect(() => {
     try {
-      localStorage.setItem('activehands_cart', JSON.stringify(cart));
+      if (cart.length > 0) {
+        localStorage.setItem('activehands_cart', JSON.stringify(cart));
+      } else {
+        localStorage.removeItem('activehands_cart');
+      }
     } catch (e) {
       console.error('Failed to save cart to localStorage', e);
     }
@@ -94,7 +105,6 @@ export function CartProvider({ children }) {
       quantity: quantity,
     };
 
-    // Optimistic UI update
     setCart((prevCart) => {
       const existingIndex = prevCart.findIndex((item) => item.id === product.id);
       if (existingIndex > -1) {
@@ -112,7 +122,6 @@ export function CartProvider({ children }) {
     setLastAddedItem(product);
     setIsCartOpen(true);
 
-    // If authenticated, sync with Supabase PostgreSQL backend
     if (isAuthenticated) {
       try {
         await api.addToCart(product, quantity);
@@ -157,6 +166,9 @@ export function CartProvider({ children }) {
 
   const clearCart = async () => {
     setCart([]);
+    try {
+      localStorage.removeItem('activehands_cart');
+    } catch {}
     if (isAuthenticated) {
       try {
         await api.clearCart();

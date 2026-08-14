@@ -32,7 +32,6 @@ export function AuthProvider({ children }) {
       }
     } catch (e) {
       console.warn('Could not refresh user session:', e);
-      // If token is invalid or expired
       if (e.message && e.message.includes('Invalid token')) {
         api.setToken(null);
         setUser(null);
@@ -97,10 +96,6 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const loginAsDemo = async () => {
-    return await login('artlover@activehands.com', 'password123');
-  };
-
   const logout = async () => {
     try {
       await api.logout();
@@ -109,6 +104,14 @@ export function AuthProvider({ children }) {
     }
     setUser(null);
     setIsAccountOpen(false);
+    try {
+      localStorage.removeItem('activehands_user');
+      localStorage.removeItem('activehands_token');
+      localStorage.removeItem('activehands_cart');
+      localStorage.removeItem('activehands_wishlist');
+    } catch (e) {
+      console.error('Error clearing localStorage on logout', e);
+    }
   };
 
   const openAuth = (mode = 'login') => {
@@ -138,7 +141,6 @@ export function AuthProvider({ children }) {
         closeAccount: () => setIsAccountOpen(false),
         login,
         signup,
-        loginAsDemo,
         logout,
         refreshUser,
         isLoading,

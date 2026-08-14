@@ -38,15 +38,28 @@ export function WishlistProvider({ children }) {
     }
   }, [isAuthenticated]);
 
+  // When user logs in fetch their wishlist, when logged out reset wishlist completely
   useEffect(() => {
     if (isAuthenticated) {
       fetchBackendWishlist();
+    } else {
+      setWishlist([]);
+      try {
+        localStorage.removeItem('activehands_wishlist');
+      } catch (e) {
+        console.error(e);
+      }
     }
   }, [isAuthenticated, fetchBackendWishlist]);
 
+  // Persist to localStorage only when items exist
   useEffect(() => {
     try {
-      localStorage.setItem('activehands_wishlist', JSON.stringify(wishlist));
+      if (wishlist.length > 0) {
+        localStorage.setItem('activehands_wishlist', JSON.stringify(wishlist));
+      } else {
+        localStorage.removeItem('activehands_wishlist');
+      }
     } catch (e) {
       console.error('Failed to update wishlist in localStorage', e);
     }
@@ -55,7 +68,6 @@ export function WishlistProvider({ children }) {
   const toggleWishlist = async (product) => {
     const exists = wishlist.some((item) => item.id === product.id);
 
-    // Optimistic UI update
     setWishlist((prev) => {
       if (exists) {
         return prev.filter((item) => item.id !== product.id);
