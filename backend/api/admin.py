@@ -33,6 +33,27 @@ class ActiveHandAdminSite(admin.AdminSite):
 
 admin_site = ActiveHandAdminSite(name='activehand_admin')
 
+def format_admin_img(img_val, width=40, height=40, is_avatar=False):
+    if not img_val:
+        return "-"
+    url = img_val.strip()
+    if url.startswith('http://') or url.startswith('https://'):
+        fallback = url
+    else:
+        path = url if url.startswith('/') else f"/{url}"
+        url = path
+        fallback = f"https://active-hand.vercel.app{path}"
+    
+    border_radius = "50%" if is_avatar else "6px"
+    return format_html(
+        '<img src="{0}" onerror="this.onerror=null; this.src=\'{1}\';" style="width: {2}px; height: {3}px; border-radius: {4}; object-fit: cover; border: 1px solid #E2E8F0; background: #F8FAFC;" />',
+        url,
+        fallback,
+        width,
+        height,
+        border_radius
+    )
+
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
     extra = 0
@@ -41,12 +62,7 @@ class OrderItemInline(admin.TabularInline):
     can_delete = False
 
     def product_preview(self, obj):
-        if obj.img:
-            return format_html(
-                '<img src="{}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover; border: 1px solid #E2E8F0;" />',
-                obj.img
-            )
-        return "-"
+        return format_admin_img(obj.img, width=40, height=40)
     product_preview.short_description = "Image"
 
     def subtotal(self, obj):
@@ -197,12 +213,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_per_page = 20
 
     def image_thumbnail(self, obj):
-        if obj.img:
-            return format_html(
-                '<img src="{}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover; border: 1px solid #E2E8F0;" />',
-                obj.img
-            )
-        return "-"
+        return format_admin_img(obj.img, width=44, height=44)
     image_thumbnail.short_description = "Image"
 
     def category_display(self, obj):
@@ -215,8 +226,12 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(UserProfile, site=admin_site)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('user_email', 'display_name', 'points', 'tier', 'created_at')
+    list_display = ('avatar_preview', 'user_email', 'display_name', 'points', 'tier', 'created_at')
     search_fields = ('user__username', 'user__email', 'display_name')
+
+    def avatar_preview(self, obj):
+        return format_admin_img(obj.avatar, width=32, height=32, is_avatar=True)
+    avatar_preview.short_description = "Avatar"
 
     def user_email(self, obj):
         return obj.user.email or obj.user.username
