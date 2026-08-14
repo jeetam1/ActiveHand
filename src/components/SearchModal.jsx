@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, X, ShoppingBag, ArrowRight } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { api } from '../services/api';
 import '../styles/modals.css';
 
-const productsCatalog = [
+const defaultCatalog = [
   { id: 1, title: 'Mosaic Art Tray Kit', price: '₹899.00', img: '/assets/b1.avif', category: 'Mosaic & Clay' },
   { id: 2, title: 'Book Binding DIY Kit', price: '₹799.00', img: '/assets/b2.avif', category: 'Paper Crafts' },
   { id: 3, title: 'Block Printing DIY Kit', price: '₹1099.00', img: '/assets/b3.avif', category: 'Traditional Crafts' },
@@ -19,24 +20,33 @@ const productsCatalog = [
   { id: 13, title: 'Origami Cloth Bags Kit', price: '₹799.00', img: '/assets/b4.avif', category: 'Origami' },
 ];
 
-export default function SearchModal({ isOpen, onClose, onNavigate }) {
+export default function SearchModal({ isOpen, onClose }) {
   const [query, setQuery] = useState('');
+  const [catalog, setCatalog] = useState(defaultCatalog);
   const inputRef = useRef(null);
   const { addToCart } = useCart();
 
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => inputRef.current?.focus(), 50);
+      api.getProducts()
+        .then((data) => {
+          if (data && Array.isArray(data) && data.length > 0) {
+            setCatalog(data);
+          }
+        })
+        .catch(() => {});
     }
   }, [isOpen]);
 
   if (!isOpen) return null;
 
   const results = query.trim() === '' 
-    ? productsCatalog.slice(0, 4) 
-    : productsCatalog.filter(p => 
+    ? catalog.slice(0, 4) 
+    : catalog.filter(p => 
         p.title.toLowerCase().includes(query.toLowerCase()) || 
-        p.category.toLowerCase().includes(query.toLowerCase())
+        (p.category && p.category.toLowerCase().includes(query.toLowerCase())) ||
+        (p.sub_category && p.sub_category.toLowerCase().includes(query.toLowerCase()))
       );
 
   const handleSelect = (product) => {
@@ -73,7 +83,7 @@ export default function SearchModal({ isOpen, onClose, onNavigate }) {
               className="search-result-item"
               onClick={() => handleSelect(prod)}
             >
-              <img src={prod.img} alt={prod.title} className="search-result-img" />
+              <img src={prod.img || '/assets/b1.avif'} alt={prod.title} className="search-result-img" />
               <div style={{ flex: 1 }}>
                 <h4 style={{ fontFamily: 'var(--font-hand)', fontSize: '1.2rem', color: '#1A1A1A', margin: 0 }}>
                   {prod.title}

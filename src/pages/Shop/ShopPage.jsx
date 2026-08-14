@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ShoppingBag, Star, ArrowRight, ShieldCheck, Truck, Video, Plus, Heart, Eye } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
+import { api } from '../../services/api';
 import '../../styles/shop.css';
 import '../../styles/modals.css';
 
@@ -209,11 +210,44 @@ const allProducts = [
 export default function ShopPage({ onNavigate, onOpenQuickView }) {
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
+  const [products, setProducts] = useState(allProducts);
   const [activeTab, setActiveTab] = useState('all');
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
 
-  const filteredProducts = allProducts.filter(item => {
+  useEffect(() => {
+    let isMounted = true;
+    api.getProducts()
+      .then((data) => {
+        if (isMounted && data && Array.isArray(data) && data.length > 0) {
+          const formatted = data.map((item) => ({
+            id: item.id,
+            category: item.category || 'popular',
+            subCategory: item.sub_category || item.subCategory || 'paper',
+            title: item.title,
+            price: item.price,
+            numericPrice: item.numeric_price,
+            url: item.url || 'https://rzp.io/l/B8kcvpZv',
+            img: item.img || '/assets/b1.avif',
+            tag: item.tag || '🎨 DIY KIT',
+            tagColor: item.tag_color || item.tagColor || 'orange',
+            tapeColor: item.tape_color || item.tapeColor || 'orange',
+            rating: String(item.rating || '4.9'),
+            reviews: item.reviews || 50,
+            perk: item.perk || 'Complete DIY crafting kit with all materials included',
+          }));
+          setProducts(formatted);
+        }
+      })
+      .catch((err) => {
+        console.warn('Using local product catalog fallback:', err);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const filteredProducts = products.filter(item => {
     if (activeTab === 'all') return true;
     if (activeTab === 'popular') return item.category === 'popular';
     if (activeTab === 'intermediate') return item.category === 'intermediate';
@@ -231,6 +265,11 @@ export default function ShopPage({ onNavigate, onOpenQuickView }) {
     }
   };
 
+  const popularCount = products.filter(p => p.category === 'popular').length;
+  const intermediateCount = products.filter(p => p.category === 'intermediate').length;
+  const traditionalCount = products.filter(p => p.subCategory === 'traditional').length;
+  const paperCount = products.filter(p => p.subCategory === 'paper').length;
+
   return (
     <div className="shop-page">
       {/* Decorative Floating Elements */}
@@ -245,31 +284,31 @@ export default function ShopPage({ onNavigate, onOpenQuickView }) {
             className={`shop-tab-btn ${activeTab === 'all' ? 'active' : ''}`}
             onClick={() => setActiveTab('all')}
           >
-            All Kits ({allProducts.length})
+            All Kits ({products.length})
           </button>
           <button 
             className={`shop-tab-btn ${activeTab === 'popular' ? 'active' : ''}`}
             onClick={() => setActiveTab('popular')}
           >
-            🌟 Popular & Beginner (9)
+            🌟 Popular & Beginner ({popularCount})
           </button>
           <button 
             className={`shop-tab-btn ${activeTab === 'intermediate' ? 'active' : ''}`}
             onClick={() => setActiveTab('intermediate')}
           >
-            🎯 Intermediate Kits (4)
+            🎯 Intermediate Kits ({intermediateCount})
           </button>
           <button 
             className={`shop-tab-btn ${activeTab === 'traditional' ? 'active' : ''}`}
             onClick={() => setActiveTab('traditional')}
           >
-            🎨 Traditional Crafts
+            🎨 Traditional Crafts ({traditionalCount})
           </button>
           <button 
             className={`shop-tab-btn ${activeTab === 'paper' ? 'active' : ''}`}
             onClick={() => setActiveTab('paper')}
           >
-            📄 Paper & Origami
+            📄 Paper & Origami ({paperCount})
           </button>
         </div>
 
