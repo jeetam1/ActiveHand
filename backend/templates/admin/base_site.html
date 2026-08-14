@@ -1,218 +1,226 @@
 {% extends "admin/base.html" %}
 {% load static %}
 
-{% block title %}{{ title }} | ActiveHand 🎨 Admin Dashboard{% endblock %}
+{% block title %}{{ title }} | ActiveHand Admin{% endblock %}
 
 {% block extrahead %}
 {{ block.super }}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --primary: #00676A;
-    --primary-dark: #004D4F;
-    --accent: #ED612B;
-    --accent-light: #FFF0EB;
-    --bg-warm: #FAF8F5;
-    --card-bg: #FFFFFF;
-    --text-dark: #1A1A1A;
-    --border-color: #E2E8F0;
+    --bg-main: #F8FAFC;
+    --bg-card: #FFFFFF;
+    --text-primary: #0F172A;
+    --text-secondary: #64748B;
+    --border-subtle: #E2E8F0;
+    --primary-color: #0F172A;
+    --primary-hover: #1E293B;
+    --accent-blue: #2563EB;
   }
 
   body {
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-    background-color: var(--bg-warm) !important;
-    color: var(--text-dark) !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    background-color: var(--bg-main) !important;
+    color: var(--text-primary) !important;
+    margin: 0;
   }
 
-  h1, h2, h3, h4, .module caption, th, .breadcrumbs {
-    font-family: 'Outfit', sans-serif !important;
-  }
-
-  /* Admin Header */
+  /* Clean Minimal Header */
   #header {
-    background: linear-gradient(135deg, #00676A 0%, #004D4F 100%) !important;
+    background: #0F172A !important;
     color: #FFFFFF !important;
-    padding: 16px 28px !important;
-    border-bottom: 3px solid #ED612B !important;
-    box-shadow: 0 4px 12px rgba(0, 103, 106, 0.15);
+    padding: 14px 24px !important;
+    border-bottom: 1px solid #1E293B !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
   #branding h1 {
-    font-size: 1.6rem !important;
-    font-weight: 800 !important;
-    letter-spacing: -0.5px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.2px;
+    margin: 0 !important;
     color: #FFFFFF !important;
   }
 
   #branding h1 a {
     color: #FFFFFF !important;
     text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 
   #user-tools {
-    font-weight: 600;
-    font-size: 0.95rem;
+    font-weight: 500;
+    font-size: 0.875rem;
+    color: #94A3B8;
   }
 
   #user-tools a {
-    color: #FFF !important;
-    border-bottom: 1.5px dashed rgba(255, 255, 255, 0.6);
-    padding-bottom: 2px;
-    transition: all 0.2s;
+    color: #F8FAFC !important;
+    text-decoration: none;
+    margin-left: 6px;
+    transition: color 0.15s;
   }
 
   #user-tools a:hover {
-    color: #FFD480 !important;
-    border-bottom-style: solid;
+    color: #38BDF8 !important;
   }
 
   /* Breadcrumbs */
   div.breadcrumbs {
     background: #FFFFFF !important;
-    border-bottom: 1px solid #E2E8F0 !important;
-    padding: 12px 28px !important;
-    font-size: 0.9rem !important;
-    font-weight: 600 !important;
-    color: #4A5568 !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
+    padding: 10px 24px !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    color: var(--text-secondary) !important;
   }
 
   div.breadcrumbs a {
-    color: #00676A !important;
-    font-weight: 700;
+    color: var(--primary-color) !important;
+    font-weight: 600;
+    text-decoration: none;
   }
 
-  /* Modules & Cards */
+  div.breadcrumbs a:hover {
+    text-decoration: underline;
+  }
+
+  /* Cards & Modules */
   .module {
-    background: #FFFFFF !important;
-    border-radius: 12px !important;
-    border: 1.5px solid #E2E8F0 !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
-    margin-bottom: 24px !important;
+    background: var(--bg-card) !important;
+    border-radius: 8px !important;
+    border: 1px solid var(--border-subtle) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+    margin-bottom: 20px !important;
     overflow: hidden;
   }
 
   .module caption, .module h2 {
-    background: #FAF8F5 !important;
-    color: #00676A !important;
-    font-size: 1.15rem !important;
-    font-weight: 700 !important;
-    padding: 12px 18px !important;
-    border-bottom: 1px solid #E2E8F0 !important;
+    background: #FFFFFF !important;
+    color: var(--text-primary) !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    padding: 12px 16px !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
+    letter-spacing: -0.1px;
   }
 
   /* Tables */
   #changelist table {
-    border-radius: 8px !important;
+    border-collapse: collapse;
+    width: 100%;
+    border-radius: 6px;
     overflow: hidden;
   }
 
   #changelist table thead th {
-    background: #F7FAFC !important;
-    color: #2D3748 !important;
-    font-weight: 700 !important;
-    font-size: 0.85rem !important;
+    background: #F8FAFC !important;
+    color: #475569 !important;
+    font-weight: 600 !important;
+    font-size: 0.8rem !important;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: 12px 14px !important;
-    border-bottom: 2px solid #E2E8F0 !important;
+    letter-spacing: 0.4px;
+    padding: 10px 14px !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
+  }
+
+  #changelist tbody tr {
+    transition: background-color 0.1s;
   }
 
   #changelist tbody tr:hover {
-    background: #F7FBFB !important;
+    background-color: #F8FAFC !important;
   }
 
   #changelist tbody td {
-    padding: 12px 14px !important;
+    padding: 10px 14px !important;
     vertical-align: middle;
-    border-bottom: 1px solid #EDF2F7 !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
+    font-size: 0.875rem;
   }
 
-  /* Action Buttons & Links */
+  /* Action Buttons & Submit */
   .button, input[type=submit], input[type=button], .submit-row input {
-    background: #00676A !important;
+    background: var(--primary-color) !important;
     color: #FFFFFF !important;
-    border-radius: 8px !important;
-    border: none !important;
-    font-family: 'Outfit', sans-serif !important;
-    font-weight: 700 !important;
-    font-size: 0.95rem !important;
-    padding: 10px 18px !important;
+    border-radius: 6px !important;
+    border: 1px solid transparent !important;
+    font-family: inherit !important;
+    font-weight: 500 !important;
+    font-size: 0.875rem !important;
+    padding: 8px 14px !important;
     cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0, 103, 106, 0.25) !important;
-    transition: all 0.2s ease !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+    transition: background 0.15s ease !important;
   }
 
   .button:hover, input[type=submit]:hover, input[type=button]:hover {
-    background: #ED612B !important;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(237, 97, 43, 0.3) !important;
+    background: var(--primary-hover) !important;
   }
 
   .button.default, input[type=submit].default {
-    background: #ED612B !important;
+    background: var(--accent-blue) !important;
   }
 
   .button.default:hover, input[type=submit].default:hover {
-    background: #00676A !important;
+    background: #1D4ED8 !important;
   }
 
   /* Form Inputs */
   input[type=text], input[type=password], input[type=email], input[type=url], 
   input[type=number], input[type=tel], textarea, select {
-    border: 1.5px solid #CBD5E0 !important;
-    border-radius: 8px !important;
-    padding: 8px 12px !important;
-    font-size: 0.95rem !important;
-    font-family: 'Plus Jakarta Sans', sans-serif !important;
-    transition: border-color 0.2s;
+    border: 1px solid #CBD5E1 !important;
+    border-radius: 6px !important;
+    padding: 7px 10px !important;
+    font-size: 0.875rem !important;
+    font-family: inherit !important;
+    color: var(--text-primary) !important;
+    transition: border-color 0.15s, box-shadow 0.15s;
   }
 
   input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, 
   textarea:focus, select:focus {
-    border-color: #ED612B !important;
+    border-color: #2563EB !important;
     outline: none !important;
-    box-shadow: 0 0 0 3px rgba(237, 97, 43, 0.15) !important;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15) !important;
   }
 
-  /* Custom Badges */
+  /* Clean Badges */
   .badge-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: 0.85rem;
-    font-family: 'Outfit', sans-serif;
-  }
-  .badge-delivered { background: #E8F5E9; color: #2E7D32; border: 1px solid #A5D6A7; }
-  .badge-transit { background: #E3F2FD; color: #1565C0; border: 1px solid #90CAF9; }
-  .badge-processing { background: #FFF3E0; color: #E65100; border: 1px solid #FFCC80; }
-  .badge-confirmed { background: #E0F2F1; color: #00695C; border: 1px solid #80CBC4; }
-
-  .badge-pay {
     display: inline-block;
     padding: 3px 8px;
     border-radius: 6px;
-    font-size: 0.8rem;
     font-weight: 600;
+    font-size: 0.78rem;
+  }
+  .badge-delivered { background: #DCFCE7; color: #166534; }
+  .badge-transit { background: #DBEAFE; color: #1E40AF; }
+  .badge-processing { background: #FEF3C7; color: #92400E; }
+  .badge-confirmed { background: #F1F5F9; color: #334155; }
+
+  .badge-pay {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
     background: #F1F5F9;
-    color: #334155;
-    border: 1px solid #CBD5E1;
+    color: #475569;
   }
 </style>
 {% endblock %}
 
 {% block branding %}
 <h1 id="site-name">
-  <span style="font-size: 1.8rem;">🎨</span>
   <a href="{% url 'admin:index' %}">
-    <strong>ActiveHand</strong> <span style="font-weight: 400; font-size: 1.1rem; opacity: 0.9;">| Studio Admin Console</span>
+    <strong>ActiveHand</strong>
+    <span style="font-weight: 400; font-size: 0.95rem; color: #94A3B8;">/ Admin</span>
   </a>
 </h1>
 {% endblock %}

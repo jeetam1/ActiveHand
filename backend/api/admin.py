@@ -5,9 +5,9 @@ from django.db.models import Sum
 from .models import UserProfile, Address, Product, CartItem, WishlistItem, Order, OrderItem
 
 class ActiveHandAdminSite(admin.AdminSite):
-    site_header = "ActiveHand 🎨 Craft Studio Console"
+    site_header = "ActiveHand Administration"
     site_title = "ActiveHand Admin"
-    index_title = "Store Operations & Live Dispatch Console"
+    index_title = "Dashboard"
 
     def index(self, request, extra_context=None):
         from django.contrib.auth.models import User
@@ -31,7 +31,6 @@ class ActiveHandAdminSite(admin.AdminSite):
         extra_context['metrics'] = metrics
         return super().index(request, extra_context=extra_context)
 
-# Instantiate the custom admin site
 admin_site = ActiveHandAdminSite(name='activehand_admin')
 
 class OrderItemInline(admin.TabularInline):
@@ -44,15 +43,15 @@ class OrderItemInline(admin.TabularInline):
     def product_preview(self, obj):
         if obj.img:
             return format_html(
-                '<img src="{}" style="width: 48px; height: 48px; border-radius: 8px; object-fit: cover; border: 1.5px solid #CBD5E0;" />',
+                '<img src="{}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover; border: 1px solid #E2E8F0;" />',
                 obj.img
             )
-        return "📦"
-    product_preview.short_description = "Kit Photo"
+        return "-"
+    product_preview.short_description = "Image"
 
     def subtotal(self, obj):
         amt = (obj.numeric_price or 0.0) * obj.quantity
-        return format_html('<strong style="color:#00676A;">₹{:,.2f}</strong>', amt)
+        return f"₹{amt:,.2f}"
     subtotal.short_description = "Subtotal"
 
 @admin.register(Order, site=admin_site)
@@ -75,10 +74,10 @@ class OrderAdmin(admin.ModelAdmin):
     list_per_page = 20
 
     fieldsets = (
-        ("📦 Order & Payment Summary", {
+        ("Order Summary", {
             'fields': ('order_number', 'status', 'total_amount', 'numeric_total', 'payment_method', 'points_earned', 'created_at')
         }),
-        ("📍 Customer & Delivery Dispatch Details", {
+        ("Customer & Shipping Details", {
             'fields': (
                 'user',
                 'shipping_name',
@@ -93,14 +92,11 @@ class OrderAdmin(admin.ModelAdmin):
     )
 
     def order_badge(self, obj):
-        return format_html(
-            '<strong style="font-family: \'Outfit\', sans-serif; font-size: 1.05rem; color: #00676A;">#{}</strong>',
-            obj.order_number
-        )
+        return format_html('<strong>#{}</strong>', obj.order_number)
     order_badge.short_description = "Order ID"
 
     def status_pill(self, obj):
-        st = obj.status or 'Confirmed ✅'
+        st = obj.status or 'Confirmed'
         if 'Delivered' in st:
             css_class = 'badge-delivered'
         elif 'Transit' in st:
@@ -110,36 +106,30 @@ class OrderAdmin(admin.ModelAdmin):
         else:
             css_class = 'badge-confirmed'
         return format_html('<span class="badge-status {}">{}</span>', css_class, st)
-    status_pill.short_description = "Order Status"
+    status_pill.short_description = "Status"
 
     def customer_info(self, obj):
         clean_phone = obj.shipping_phone.replace(' ', '').replace('+', '').replace('-', '')
         return format_html(
             '<div>'
-            '<strong>{}</strong><br/>'
-            '<span style="color:#718096; font-size:0.85rem;">📞 {}</span> '
-            '<a href="https://wa.me/{}" target="_blank" style="color:#25D366; font-weight:700; text-decoration:none; margin-left:4px;" title="Chat on WhatsApp">💬</a>'
-            '<br/><span style="color:#4A5568; font-size:0.85rem;">📍 {}, {}</span>'
+            '<div style="font-weight:600; color:#0F172A;">{}</div>'
+            '<div style="font-size:0.8rem; color:#64748B;">{} &bull; {}, {}</div>'
             '</div>',
             obj.shipping_name,
             obj.shipping_phone,
-            clean_phone,
             obj.shipping_city,
             obj.shipping_pincode
         )
-    customer_info.short_description = "Customer Details"
+    customer_info.short_description = "Customer"
 
     def items_count(self, obj):
         count = obj.items.count()
-        return format_html('<span style="font-weight:700; color:#2D3748;">{} Kit(s)</span>', count)
+        return f"{count} item{'s' if count != 1 else ''}"
     items_count.short_description = "Items"
 
     def formatted_total(self, obj):
-        return format_html(
-            '<strong style="color:#ED612B; font-size:1.1rem; font-family:\'Outfit\', sans-serif;">{}</strong>',
-            obj.total_amount
-        )
-    formatted_total.short_description = "Total Amount"
+        return format_html('<strong>{}</strong>', obj.total_amount)
+    formatted_total.short_description = "Total"
 
     def payment_pill(self, obj):
         pm = obj.payment_method.upper()
@@ -148,11 +138,11 @@ class OrderAdmin(admin.ModelAdmin):
 
     def formatted_date(self, obj):
         return obj.created_at.strftime("%d %b %Y, %I:%M %p")
-    formatted_date.short_description = "Ordered At"
+    formatted_date.short_description = "Date"
 
     def quick_actions(self, obj):
         return format_html(
-            '<a class="button" href="/admin/api/order/{}/change/" style="padding: 4px 10px; font-size: 0.8rem; background: #00676A !important; color:#FFF; text-decoration:none; border-radius:6px;">View 👁️</a>',
+            '<a href="/admin/api/order/{}/change/" style="color:#2563EB; font-weight:500; text-decoration:none; font-size:0.85rem;">View &rarr;</a>',
             obj.id
         )
     quick_actions.short_description = "Action"
@@ -160,48 +150,48 @@ class OrderAdmin(admin.ModelAdmin):
     def whatsapp_direct_link(self, obj):
         clean_phone = obj.shipping_phone.replace(' ', '').replace('+', '').replace('-', '')
         return format_html(
-            '<a href="https://wa.me/{}" target="_blank" style="background:#25D366; color:#FFF; padding:6px 14px; border-radius:8px; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">'
-            '💬 Open Customer WhatsApp Chat ({})</a>',
+            '<a href="https://wa.me/{}" target="_blank" style="display:inline-block; padding:5px 12px; background:#10B981; color:#FFFFFF; border-radius:6px; font-weight:500; font-size:0.85rem; text-decoration:none;">'
+            'Chat on WhatsApp ({})</a>',
             clean_phone,
             obj.shipping_phone
         )
-    whatsapp_direct_link.short_description = "WhatsApp Instant Chat"
+    whatsapp_direct_link.short_description = "WhatsApp"
 
     def google_maps_link(self, obj):
         full_query = f"{obj.shipping_address}, {obj.shipping_city}, {obj.shipping_pincode}"
         import urllib.parse
         encoded = urllib.parse.quote(full_query)
         return format_html(
-            '<a href="https://www.google.com/maps/search/?api=1&query={}" target="_blank" style="background:#4285F4; color:#FFF; padding:6px 14px; border-radius:8px; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">'
-            '🗺️ Open Address on Google Maps</a>',
+            '<a href="https://www.google.com/maps/search/?api=1&query={}" target="_blank" style="display:inline-block; padding:5px 12px; background:#2563EB; color:#FFFFFF; border-radius:6px; font-weight:500; font-size:0.85rem; text-decoration:none;">'
+            'View on Google Maps</a>',
             encoded
         )
-    google_maps_link.short_description = "Delivery Navigation"
+    google_maps_link.short_description = "Maps Navigation"
 
     # Custom Admin Actions
-    @admin.action(description="🚚 Mark selected orders as In Transit")
+    @admin.action(description="Mark selected orders as In Transit")
     def mark_in_transit(self, request, queryset):
         count = queryset.update(status='In Transit 🚚')
-        self.message_user(request, f"Updated {count} order(s) to 'In Transit 🚚'", messages.SUCCESS)
+        self.message_user(request, f"Updated {count} order(s) to 'In Transit'", messages.SUCCESS)
 
-    @admin.action(description="✅ Mark selected orders as Delivered")
+    @admin.action(description="Mark selected orders as Delivered")
     def mark_delivered(self, request, queryset):
         count = queryset.update(status='Delivered')
         self.message_user(request, f"Updated {count} order(s) to 'Delivered'", messages.SUCCESS)
 
-    @admin.action(description="📦 Mark selected orders as Processing")
+    @admin.action(description="Mark selected orders as Processing")
     def mark_processing(self, request, queryset):
         count = queryset.update(status='Processing 📦')
-        self.message_user(request, f"Updated {count} order(s) to 'Processing 📦'", messages.SUCCESS)
+        self.message_user(request, f"Updated {count} order(s) to 'Processing'", messages.SUCCESS)
 
-    @admin.action(description="🎉 Mark selected orders as Confirmed")
+    @admin.action(description="Mark selected orders as Confirmed")
     def mark_confirmed(self, request, queryset):
         count = queryset.update(status='Confirmed ✅')
-        self.message_user(request, f"Updated {count} order(s) to 'Confirmed ✅'", messages.SUCCESS)
+        self.message_user(request, f"Updated {count} order(s) to 'Confirmed'", messages.SUCCESS)
 
 @admin.register(Product, site=admin_site)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('image_thumbnail', 'title', 'formatted_price', 'category_tag', 'rating_stars', 'reviews_display')
+    list_display = ('image_thumbnail', 'title', 'price', 'category_display', 'rating_display', 'reviews')
     list_filter = ('category', 'sub_category')
     search_fields = ('title', 'perk', 'tag')
     list_per_page = 20
@@ -209,63 +199,28 @@ class ProductAdmin(admin.ModelAdmin):
     def image_thumbnail(self, obj):
         if obj.img:
             return format_html(
-                '<img src="{}" style="width: 48px; height: 48px; border-radius: 8px; object-fit: cover; border: 1.5px solid #CBD5E0;" />',
+                '<img src="{}" style="width: 40px; height: 40px; border-radius: 6px; object-fit: cover; border: 1px solid #E2E8F0;" />',
                 obj.img
             )
-        return "🖼️"
+        return "-"
     image_thumbnail.short_description = "Image"
 
-    def formatted_price(self, obj):
-        return format_html('<strong style="color:#00676A; font-size:1rem;">{}</strong>', obj.price)
-    formatted_price.short_description = "Price"
+    def category_display(self, obj):
+        return f"{obj.category.capitalize()} ({obj.sub_category})"
+    category_display.short_description = "Category"
 
-    def category_tag(self, obj):
-        return format_html(
-            '<span style="background:#FFF0EB; color:#ED612B; padding:3px 8px; border-radius:12px; font-weight:700; font-size:0.8rem;">{} / {}</span>',
-            obj.category.upper(),
-            obj.sub_category.capitalize()
-        )
-    category_tag.short_description = "Category"
-
-    def rating_stars(self, obj):
-        return format_html('⭐ <strong>{}</strong>', obj.rating)
-    rating_stars.short_description = "Rating"
-
-    def reviews_display(self, obj):
-        return f"{obj.reviews} reviews"
-    reviews_display.short_description = "Reviews"
+    def rating_display(self, obj):
+        return f"★ {obj.rating}"
+    rating_display.short_description = "Rating"
 
 @admin.register(UserProfile, site=admin_site)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('avatar_preview', 'user_email', 'display_name', 'points_badge', 'tier_pill', 'created_at')
+    list_display = ('user_email', 'display_name', 'points', 'tier', 'created_at')
     search_fields = ('user__username', 'user__email', 'display_name')
-
-    def avatar_preview(self, obj):
-        if obj.avatar:
-            return format_html(
-                '<img src="{}" style="width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid #00676A;" />',
-                obj.avatar
-            )
-        return "👤"
-    avatar_preview.short_description = "Avatar"
 
     def user_email(self, obj):
         return obj.user.email or obj.user.username
-    user_email.short_description = "User Account"
-
-    def points_badge(self, obj):
-        return format_html(
-            '<span style="background:#FFF3E0; color:#E65100; font-weight:800; padding:3px 10px; border-radius:12px;">🌟 {} Pts</span>',
-            obj.points
-        )
-    points_badge.short_description = "Maker Points"
-
-    def tier_pill(self, obj):
-        return format_html(
-            '<span style="background:#E0F2F1; color:#00695C; font-weight:700; padding:3px 8px; border-radius:8px;">{}</span>',
-            obj.tier
-        )
-    tier_pill.short_description = "Tier"
+    user_email.short_description = "Email / User"
 
 @admin.register(Address, site=admin_site)
 class AddressAdmin(admin.ModelAdmin):
@@ -274,8 +229,8 @@ class AddressAdmin(admin.ModelAdmin):
     search_fields = ('user__username', 'name', 'phone', 'address', 'city', 'pincode')
 
     def formatted_address(self, obj):
-        return obj.address[:50] + ("..." if len(obj.address) > 50 else "")
-    formatted_address.short_description = "Street Address"
+        return obj.address[:45] + ("..." if len(obj.address) > 45 else "")
+    formatted_address.short_description = "Address"
 
 @admin.register(CartItem, site=admin_site)
 class CartItemAdmin(admin.ModelAdmin):
@@ -289,7 +244,6 @@ class WishlistItemAdmin(admin.ModelAdmin):
     list_filter = ('created_at',)
     search_fields = ('user__username', 'user__email', 'title')
 
-# Also register standard User and Group models for user management
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.admin import UserAdmin, GroupAdmin
 admin_site.register(User, UserAdmin)

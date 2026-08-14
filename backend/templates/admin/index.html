@@ -2,92 +2,67 @@
 {% load i18n static %}
 
 {% block content %}
-<div style="margin-bottom: 28px;">
-  <!-- Welcome Banner -->
-  <div style="background: linear-gradient(135deg, #00676A 0%, #004D4F 100%); color: #FFFFFF; padding: 24px 28px; border-radius: 14px; margin-bottom: 24px; box-shadow: 0 4px 14px rgba(0, 103, 106, 0.2); display: flex; justify-content: space-between; align-items: center; border-left: 6px solid #ED612B;">
+<div style="margin-bottom: 24px;">
+  <!-- Clean Dashboard Header -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid #E2E8F0;">
     <div>
-      <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.8rem; font-weight: 800; margin: 0 0 6px 0; color: #FFFFFF;">
-        Welcome to ActiveHand Studio Console 👋
+      <h2 style="font-size: 1.35rem; font-weight: 700; color: #0F172A; margin: 0 0 2px 0;">
+        Store Overview
       </h2>
-      <p style="margin: 0; font-size: 1rem; opacity: 0.9; font-family: 'Plus Jakarta Sans', sans-serif;">
-        Live dispatch hub, customer order tracking, and store inventory connected to Supabase PostgreSQL.
+      <p style="margin: 0; font-size: 0.875rem; color: #64748B;">
+        Overview of live orders, inventory catalog, and store performance.
       </p>
     </div>
-    <div style="display: flex; gap: 10px;">
-      <a href="{% url 'admin:api_order_changelist' %}" class="button" style="background: #ED612B !important; color: #FFF; font-weight: 700; text-decoration: none; padding: 10px 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
-        📦 View Live Orders
+    <div style="display: flex; gap: 8px;">
+      <a href="{% url 'admin:api_order_changelist' %}" class="button" style="text-decoration: none; padding: 7px 12px; font-size: 0.85rem;">
+        View Orders
       </a>
-      <a href="{% url 'admin:api_product_add' %}" class="button" style="background: #FFFFFF !important; color: #00676A !important; font-weight: 700; text-decoration: none; padding: 10px 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
-        ➕ Add New Craft Kit
+      <a href="{% url 'admin:api_product_add' %}" class="button" style="background: #2563EB !important; text-decoration: none; padding: 7px 12px; font-size: 0.85rem;">
+        + Add Product
       </a>
     </div>
   </div>
 
-  <!-- KPI Metrics Grid -->
+  <!-- Minimal KPI Grid -->
   {% if metrics %}
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 28px;">
-    <!-- Metric 1: Total Revenue -->
-    <div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 18px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display: flex; align-items: center; gap: 16px;">
-      <div style="width: 48px; height: 48px; border-radius: 10px; background: #FFF0EB; color: #ED612B; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
-        💰
-      </div>
-      <div>
-        <span style="font-size: 0.85rem; color: #718096; font-weight: 600; text-transform: uppercase;">Total Sales</span>
-        <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 800; color: #00676A; margin: 2px 0 0 0;">
-          {{ metrics.total_revenue }}
-        </h3>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 24px;">
+    <!-- Metric 1: Revenue -->
+    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; padding: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+      <div style="font-size: 0.8rem; color: #64748B; font-weight: 500; margin-bottom: 4px;">Total Sales</div>
+      <div style="font-size: 1.4rem; font-weight: 700; color: #0F172A;">
+        {{ metrics.total_revenue }}
       </div>
     </div>
 
     <!-- Metric 2: Total Orders -->
-    <div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 18px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display: flex; align-items: center; gap: 16px;">
-      <div style="width: 48px; height: 48px; border-radius: 10px; background: #E0F2F1; color: #00695C; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
-        📦
-      </div>
-      <div>
-        <span style="font-size: 0.85rem; color: #718096; font-weight: 600; text-transform: uppercase;">Total Orders</span>
-        <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 800; color: #1A1A1A; margin: 2px 0 0 0;">
-          {{ metrics.total_orders }} Orders
-        </h3>
+    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; padding: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+      <div style="font-size: 0.8rem; color: #64748B; font-weight: 500; margin-bottom: 4px;">Total Orders</div>
+      <div style="font-size: 1.4rem; font-weight: 700; color: #0F172A;">
+        {{ metrics.total_orders }}
       </div>
     </div>
 
-    <!-- Metric 3: Pending Shipments -->
-    <div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 18px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display: flex; align-items: center; gap: 16px;">
-      <div style="width: 48px; height: 48px; border-radius: 10px; background: #FFF3E0; color: #E65100; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
-        🚚
-      </div>
-      <div>
-        <span style="font-size: 0.85rem; color: #718096; font-weight: 600; text-transform: uppercase;">Active Shipments</span>
-        <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 800; color: #ED612B; margin: 2px 0 0 0;">
-          {{ metrics.pending_orders }} To Dispatch
-        </h3>
+    <!-- Metric 3: Active Orders -->
+    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; padding: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+      <div style="font-size: 0.8rem; color: #64748B; font-weight: 500; margin-bottom: 4px;">Active Orders</div>
+      <div style="font-size: 1.4rem; font-weight: 700; color: #2563EB;">
+        {{ metrics.pending_orders }}
       </div>
     </div>
 
-    <!-- Metric 4: Total Craft Kits -->
-    <div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 18px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display: flex; align-items: center; gap: 16px;">
-      <div style="width: 48px; height: 48px; border-radius: 10px; background: #EDE7F6; color: #512DA8; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
-        🎨
-      </div>
-      <div>
-        <span style="font-size: 0.85rem; color: #718096; font-weight: 600; text-transform: uppercase;">Catalog Kits</span>
-        <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 800; color: #1A1A1A; margin: 2px 0 0 0;">
-          {{ metrics.total_products }} Kits
-        </h3>
+    <!-- Metric 4: Total Products -->
+    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; padding: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+      <div style="font-size: 0.8rem; color: #64748B; font-weight: 500; margin-bottom: 4px;">Products in Catalog</div>
+      <div style="font-size: 1.4rem; font-weight: 700; color: #0F172A;">
+        {{ metrics.total_products }}
       </div>
     </div>
 
-    <!-- Metric 5: Registered Makers -->
-    <div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 18px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display: flex; align-items: center; gap: 16px;">
-      <div style="width: 48px; height: 48px; border-radius: 10px; background: #E8F5E9; color: #2E7D32; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
-        🌟
-      </div>
-      <div>
-        <span style="font-size: 0.85rem; color: #718096; font-weight: 600; text-transform: uppercase;">Registered Makers</span>
-        <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 800; color: #00676A; margin: 2px 0 0 0;">
-          {{ metrics.total_makers }} Makers
-        </h3>
+    <!-- Metric 5: Customers -->
+    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; padding: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+      <div style="font-size: 0.8rem; color: #64748B; font-weight: 500; margin-bottom: 4px;">Customers</div>
+      <div style="font-size: 1.4rem; font-weight: 700; color: #0F172A;">
+        {{ metrics.total_makers }}
       </div>
     </div>
   </div>
@@ -95,59 +70,54 @@
 
   <!-- Recent Orders Table -->
   {% if metrics.recent_orders %}
-  <div style="background: #FFFFFF; border: 1.5px solid #E2E8F0; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 28px; overflow: hidden;">
-    <div style="padding: 16px 20px; background: #FAF8F5; border-bottom: 1.5px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center;">
-      <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 800; color: #00676A; margin: 0; display: flex; align-items: center; gap: 8px;">
-        <span>🛍️ Recent Customer Orders</span>
-      </h3>
-      <a href="{% url 'admin:api_order_changelist' %}" style="color: #ED612B; font-weight: 700; font-size: 0.9rem; text-decoration: none;">
-        View All Orders &rarr;
+  <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); margin-bottom: 24px; overflow: hidden;">
+    <div style="padding: 12px 16px; background: #FFFFFF; border-bottom: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-size: 0.95rem; font-weight: 600; color: #0F172A;">
+        Recent Orders
+      </span>
+      <a href="{% url 'admin:api_order_changelist' %}" style="color: #2563EB; font-weight: 500; font-size: 0.85rem; text-decoration: none;">
+        View all orders &rarr;
       </a>
     </div>
 
     <div style="overflow-x: auto;">
-      <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.95rem;">
+      <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.875rem;">
         <thead>
-          <tr style="background: #F7FAFC; border-bottom: 2px solid #E2E8F0;">
-            <th style="padding: 12px 16px; font-weight: 700; color: #4A5568;">Order ID</th>
-            <th style="padding: 12px 16px; font-weight: 700; color: #4A5568;">Customer Name</th>
-            <th style="padding: 12px 16px; font-weight: 700; color: #4A5568;">Phone / WhatsApp</th>
-            <th style="padding: 12px 16px; font-weight: 700; color: #4A5568;">City & Pincode</th>
-            <th style="padding: 12px 16px; font-weight: 700; color: #4A5568;">Total</th>
-            <th style="padding: 12px 16px; font-weight: 700; color: #4A5568;">Status</th>
-            <th style="padding: 12px 16px; font-weight: 700; color: #4A5568;">Action</th>
+          <tr style="background: #F8FAFC; border-bottom: 1px solid #E2E8F0;">
+            <th style="padding: 10px 14px; font-weight: 600; color: #475569; font-size: 0.8rem; text-transform: uppercase;">Order ID</th>
+            <th style="padding: 10px 14px; font-weight: 600; color: #475569; font-size: 0.8rem; text-transform: uppercase;">Customer</th>
+            <th style="padding: 10px 14px; font-weight: 600; color: #475569; font-size: 0.8rem; text-transform: uppercase;">City</th>
+            <th style="padding: 10px 14px; font-weight: 600; color: #475569; font-size: 0.8rem; text-transform: uppercase;">Total</th>
+            <th style="padding: 10px 14px; font-weight: 600; color: #475569; font-size: 0.8rem; text-transform: uppercase;">Status</th>
+            <th style="padding: 10px 14px; font-weight: 600; color: #475569; font-size: 0.8rem; text-transform: uppercase;">Action</th>
           </tr>
         </thead>
         <tbody>
           {% for ord in metrics.recent_orders %}
-          <tr style="border-bottom: 1px solid #EDF2F7; transition: background 0.15s;">
-            <td style="padding: 12px 16px; font-weight: 800; font-family: 'Outfit', sans-serif; color: #00676A;">
-              <a href="{% url 'admin:api_order_change' ord.id %}" style="color: #00676A; text-decoration: none;">
+          <tr style="border-bottom: 1px solid #F1F5F9;">
+            <td style="padding: 10px 14px; font-weight: 600; color: #0F172A;">
+              <a href="{% url 'admin:api_order_change' ord.id %}" style="color: #2563EB; text-decoration: none;">
                 #{{ ord.order_number }}
               </a>
             </td>
-            <td style="padding: 12px 16px; font-weight: 600; color: #1A1A1A;">
+            <td style="padding: 10px 14px; color: #1E293B;">
               {{ ord.shipping_name }}
+              <div style="font-size: 0.78rem; color: #64748B;">{{ ord.shipping_phone }}</div>
             </td>
-            <td style="padding: 12px 16px;">
-              <a href="https://wa.me/{{ ord.shipping_phone|cut:' '|cut:'+'|cut:'-' }}" target="_blank" style="display: inline-flex; align-items: center; gap: 4px; color: #25D366; font-weight: 700; text-decoration: none;" title="Chat on WhatsApp">
-                💬 {{ ord.shipping_phone }}
-              </a>
+            <td style="padding: 10px 14px; color: #475569;">
+              {{ ord.shipping_city }}
             </td>
-            <td style="padding: 12px 16px; color: #4A5568;">
-              {{ ord.shipping_city }} ({{ ord.shipping_pincode }})
-            </td>
-            <td style="padding: 12px 16px; font-weight: 800; color: #ED612B; font-family: 'Outfit', sans-serif;">
+            <td style="padding: 10px 14px; font-weight: 600; color: #0F172A;">
               {{ ord.total_amount }}
             </td>
-            <td style="padding: 12px 16px;">
+            <td style="padding: 10px 14px;">
               <span class="badge-status {% if 'Delivered' in ord.status %}badge-delivered{% elif 'Transit' in ord.status %}badge-transit{% elif 'Processing' in ord.status %}badge-processing{% else %}badge-confirmed{% endif %}">
                 {{ ord.status }}
               </span>
             </td>
-            <td style="padding: 12px 16px;">
-              <a href="{% url 'admin:api_order_change' ord.id %}" style="background: #00676A; color: #FFF; padding: 6px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 700; text-decoration: none;">
-                Inspect 👁️
+            <td style="padding: 10px 14px;">
+              <a href="{% url 'admin:api_order_change' ord.id %}" style="color: #2563EB; font-weight: 500; text-decoration: none; font-size: 0.85rem;">
+                Details &rarr;
               </a>
             </td>
           </tr>
