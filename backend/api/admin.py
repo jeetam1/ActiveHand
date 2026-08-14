@@ -1,39 +1,218 @@
 from django.contrib import admin
+from django.utils.html import format_html
+from django.contrib import messages
 from .models import UserProfile, Address, Product, CartItem, WishlistItem, Order, OrderItem
 
-@admin.register(UserProfile)
-class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'display_name', 'points', 'tier', 'created_at')
-    search_fields = ('user__username', 'user__email', 'display_name')
-
-@admin.register(Address)
-class AddressAdmin(admin.ModelAdmin):
-    list_display = ('user', 'name', 'phone', 'city', 'pincode', 'is_default')
-    search_fields = ('user__username', 'name', 'city', 'pincode')
-
-@admin.register(Product)
-class ProductAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'price', 'category', 'sub_category', 'rating', 'reviews')
-    list_filter = ('category', 'sub_category')
-    search_fields = ('title', 'perk')
-
-@admin.register(CartItem)
-class CartItemAdmin(admin.ModelAdmin):
-    list_display = ('user', 'title', 'price', 'quantity', 'updated_at')
-    search_fields = ('user__username', 'title')
-
-@admin.register(WishlistItem)
-class WishlistItemAdmin(admin.ModelAdmin):
-    list_display = ('user', 'title', 'product_id', 'created_at')
-    search_fields = ('user__username', 'title')
+# Customize Admin Site Headers
+admin.site.site_header = "ActiveHand 🎨 Craft Studio Console"
+admin.site.site_title = "ActiveHand Admin"
+admin.site.index_title = "Store Operations & Live Orders"
 
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
     extra = 0
+    readonly_fields = ('product_preview', 'title', 'price', 'numeric_price', 'quantity', 'subtotal')
+    fields = ('product_preview', 'title', 'price', 'quantity', 'subtotal')
+
+    def product_preview(self, obj):
+        if obj.img:
+            return format_html(
+                '<img src="{}" style="width: 44px; height: 44px; border-radius: 6px; object-fit: cover; border: 1.5px solid #E2E8F0;" />',
+                obj.img
+            )
+        return "📦"
+    product_preview.short_description = "Preview"
+
+    def subtotal(self, obj):
+        amt = (obj.numeric_price or 0.0) * obj.quantity
+        return f"₹{amt:,.2f}"
+    subtotal.short_description = "Subtotal"
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('order_number', 'user', 'total_amount', 'status', 'payment_method', 'created_at')
-    list_filter = ('status', 'payment_method')
-    search_fields = ('order_number', 'user__username', 'shipping_name', 'shipping_phone')
+    list_display = (
+        'order_badge',
+        'status_pill',
+        'customer_info',
+        'items_count',
+        'formatted_total',
+        'payment_pill',
+        'formatted_date'
+    )
+    list_filter = ('status', 'payment_method', 'created_at')
+    search_fields = ('order_number', 'shipping_name', 'shipping_phone', 'shipping_city', 'shipping_pincode', 'user__email')
+    readonly_fields = ('order_number', 'created_at', 'points_earned')
     inlines = [OrderItemInline]
+    actions = ['mark_delivered', 'mark_in_transit', 'mark_processing', 'mark_confirmed']
+    list_per_page = 20
+
+    fieldsets = (
+        ("Order Overview", {
+            'fields': ('order_number', 'status', 'total_amount', 'numeric_total', 'payment_method', 'points_earned', 'created_at')
+        }),
+        ("Customer & Delivery Address", {
+            'fields': ('user', 'shipping_name', 'shipping_phone', 'shipping_address', 'shipping_city', 'shipping_pincode')
+        }),
+    )
+
+    def order_badge(self, obj):
+        return format_html(
+            '<strong style="font-family: \'Outfit\', sans-serif; font-size: 1.05rem; color: #00676A;">#{}</strong>',
+            obj.order_number
+        )
+    order_badge.short_description = "Order ID"
+
+    def status_pill(self, obj):
+        st = obj.status or 'Confirmed ✅'
+        if 'Delivered' in st:
+            css_class = 'badge-delivered'
+        elif 'Transit' in st:
+            css_class = 'badge-transit'
+        elif 'Processing' in st:
+            css_class = 'badge-processing'
+        else:
+            css_class = 'badge-confirmed'
+        return format_html('<span class="badge-status {}">{}</span>', css_class, st)
+    status_pill.short_description = "Order Status"
+
+    def customer_info(self, obj):
+        return format_html(
+            '<div><strong>{}</strong><br/><span style="color:#718096; font-size:0.85rem;">📞 {} &bull; {} ({})</span></div>',
+            obj.shipping_name,
+            obj.shipping_phone,
+            obj.shipping_city,
+            obj.shipping_pincode
+        )
+    customer_info.short_description = "Customer Details"
+
+    def items_count(self, obj):
+        count = obj.items.count()
+        return format_html('<span style="font-weight:700; color:#2D3748;">{} Kit(s)</span>', count)
+    items_count.short_description = "Items"
+
+    def formatted_total(self, obj):
+        return format_html(
+            '<strong style="color:#ED612B; font-size:1.05rem; font-family:\'Outfit\', sans-serif;">{}</strong>',
+            obj.total_amount
+        )
+    formatted_total.short_description = "Total Amount"
+
+    def payment_pill(self, obj):
+        pm = obj.payment_method.upper()
+        return format_html('<span class="badge-pay">{}</span>', pm)
+    payment_pill.short_description = "Payment"
+
+    def formatted_date(self, obj):
+        return obj.created_at.strftime("%d %b %Y, %I:%M %p")
+    formatted_date.short_description = "Ordered At"
+
+    # Custom Admin Actions
+    @admin.action(description="🚚 Mark selected orders as In Transit")
+    def mark_in_transit(self, request, queryset):
+        count = queryset.update(status='In Transit 🚚')
+        self.message_user(request, f"Updated {count} order(s) to 'In Transit 🚚'", messages.SUCCESS)
+
+    @admin.action(description="✅ Mark selected orders as Delivered")
+    def mark_delivered(self, request, queryset):
+        count = queryset.update(status='Delivered')
+        self.message_user(request, f"Updated {count} order(s) to 'Delivered'", messages.SUCCESS)
+
+    @admin.action(description="📦 Mark selected orders as Processing")
+    def mark_processing(self, request, queryset):
+        count = queryset.update(status='Processing 📦')
+        self.message_user(request, f"Updated {count} order(s) to 'Processing 📦'", messages.SUCCESS)
+
+    @admin.action(description="🎉 Mark selected orders as Confirmed")
+    def mark_confirmed(self, request, queryset):
+        count = queryset.update(status='Confirmed ✅')
+        self.message_user(request, f"Updated {count} order(s) to 'Confirmed ✅'", messages.SUCCESS)
+
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ('image_thumbnail', 'title', 'formatted_price', 'category_tag', 'rating_stars', 'reviews_display')
+    list_filter = ('category', 'sub_category')
+    search_fields = ('title', 'perk', 'tag')
+    list_per_page = 20
+
+    def image_thumbnail(self, obj):
+        if obj.img:
+            return format_html(
+                '<img src="{}" style="width: 48px; height: 48px; border-radius: 8px; object-fit: cover; border: 1.5px solid #CBD5E0;" />',
+                obj.img
+            )
+        return "🖼️"
+    image_thumbnail.short_description = "Image"
+
+    def formatted_price(self, obj):
+        return format_html('<strong style="color:#00676A; font-size:1rem;">{}</strong>', obj.price)
+    formatted_price.short_description = "Price"
+
+    def category_tag(self, obj):
+        return format_html(
+            '<span style="background:#FFF0EB; color:#ED612B; padding:3px 8px; border-radius:12px; font-weight:700; font-size:0.8rem;">{} / {}</span>',
+            obj.category.upper(),
+            obj.sub_category.capitalize()
+        )
+    category_tag.short_description = "Category"
+
+    def rating_stars(self, obj):
+        return format_html('⭐ <strong>{}</strong>', obj.rating)
+    rating_stars.short_description = "Rating"
+
+    def reviews_display(self, obj):
+        return f"{obj.reviews} reviews"
+    reviews_display.short_description = "Reviews"
+
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ('avatar_preview', 'user_email', 'display_name', 'points_badge', 'tier_pill', 'created_at')
+    search_fields = ('user__username', 'user__email', 'display_name')
+
+    def avatar_preview(self, obj):
+        if obj.avatar:
+            return format_html(
+                '<img src="{}" style="width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid #00676A;" />',
+                obj.avatar
+            )
+        return "👤"
+    avatar_preview.short_description = "Avatar"
+
+    def user_email(self, obj):
+        return obj.user.email or obj.user.username
+    user_email.short_description = "User Account"
+
+    def points_badge(self, obj):
+        return format_html(
+            '<span style="background:#FFF3E0; color:#E65100; font-weight:800; padding:3px 10px; border-radius:12px;">🌟 {} Pts</span>',
+            obj.points
+        )
+    points_badge.short_description = "Maker Points"
+
+    def tier_pill(self, obj):
+        return format_html(
+            '<span style="background:#E0F2F1; color:#00695C; font-weight:700; padding:3px 8px; border-radius:8px;">{}</span>',
+            obj.tier
+        )
+    tier_pill.short_description = "Tier"
+
+@admin.register(Address)
+class AddressAdmin(admin.ModelAdmin):
+    list_display = ('user', 'name', 'phone', 'formatted_address', 'city', 'pincode', 'is_default')
+    list_filter = ('city', 'is_default')
+    search_fields = ('user__username', 'name', 'phone', 'address', 'city', 'pincode')
+
+    def formatted_address(self, obj):
+        return obj.address[:50] + ("..." if len(obj.address) > 50 else "")
+    formatted_address.short_description = "Street Address"
+
+@admin.register(CartItem)
+class CartItemAdmin(admin.ModelAdmin):
+    list_display = ('user', 'title', 'price', 'quantity', 'updated_at')
+    list_filter = ('updated_at',)
+    search_fields = ('user__username', 'user__email', 'title')
+
+@admin.register(WishlistItem)
+class WishlistItemAdmin(admin.ModelAdmin):
+    list_display = ('user', 'title', 'product_id', 'created_at')
+    list_filter = ('created_at',)
+    search_fields = ('user__username', 'user__email', 'title')

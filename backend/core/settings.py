@@ -50,7 +50,7 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -81,6 +81,7 @@ else:
             'default': dj_database_url.config(
                 default=DATABASE_URL,
                 conn_max_age=600,
+                conn_health_checks=True,
                 ssl_require=False
             )
         }

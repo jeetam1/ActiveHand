@@ -103,22 +103,22 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
 
     def validate(self, data):
-        email_or_username = data.get('email')
-        password = data.get('password')
+        email_or_username = data.get('email', '').strip()
+        password = data.get('password', '')
 
-        # Find user by email or username
-        user = None
-        if '@' in email_or_username:
-            user_obj = User.objects.filter(email__iexact=email_or_username).first()
-            if user_obj:
-                user = authenticate(username=user_obj.username, password=password)
-        else:
-            user = authenticate(username=email_or_username, password=password)
+        if not email_or_username or not password:
+            raise serializers.ValidationError("Email and password are required.")
 
-        if not user:
-            raise serializers.ValidationError("Invalid email or password.")
-        data['user'] = user
-        return data
+        # Fast lookup with prefetching profile, addresses and orders
+        user_obj = User.objects.filter(username__iexact=email_or_username).select_related('profile').prefetch_related('addresses', 'orders__items').first()
+        if not user_obj and '@' in email_or_username:
+            user_obj = User.objects.filter(email__iexact=email_or_username).select_related('profile').prefetch_related('addresses', 'orders__items').first()
+
+        if user_obj and user_obj.check_password(password):
+            data['user'] = user_obj
+            return data
+
+        raise serializers.ValidationError("Invalid email or password.")
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
