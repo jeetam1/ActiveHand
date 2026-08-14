@@ -5,23 +5,24 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.65);
   backdrop-filter: blur(4px);
   z-index: 2100;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
+  overscroll-behavior: contain;
   animation: fadeIn 0.2s ease-out;
 }
 
-/* Modal Card */
+/* Modal Card - Balanced & Spacious */
 .auth-modal-card {
   width: 100%;
-  max-width: 460px;
+  max-width: 450px;
   background: #FFFDF9;
   border: 2.5px solid #1A1A1A;
-  border-radius: 12px;
+  border-radius: 14px;
   box-shadow: 6px 8px 0px #1A1A1A;
   position: relative;
   overflow: hidden;
@@ -29,8 +30,13 @@
 }
 
 @keyframes popIn {
-  0% { transform: scale(0.9) translateY(10px); opacity: 0; }
+  0% { transform: scale(0.92) translateY(10px); opacity: 0; }
   100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }
 
 /* Tape sticker on top */
@@ -39,9 +45,9 @@
   top: -8px;
   left: 50%;
   transform: translateX(-50%) rotate(-1deg);
-  width: 80px;
-  height: 20px;
-  background: var(--orange);
+  width: 76px;
+  height: 18px;
+  background: var(--orange, #ED612B);
   border-radius: 2px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   z-index: 5;
@@ -50,10 +56,10 @@
 /* Close button */
 .auth-modal-close {
   position: absolute;
-  top: 14px;
-  right: 14px;
+  top: 12px;
+  right: 12px;
   background: #FAF8F5;
-  border: 1.5px solid #1A1A1A;
+  border: 2px solid #1A1A1A;
   border-radius: 50%;
   width: 32px;
   height: 32px;
@@ -66,55 +72,57 @@
 }
 
 .auth-modal-close:hover {
-  background: var(--orange);
+  background: var(--orange, #ED612B);
   color: #fff;
   transform: rotate(90deg);
 }
 
 /* Header & Mascot */
 .auth-modal-header {
-  padding: 30px 24px 16px;
+  padding: 24px 24px 16px;
   text-align: center;
   background: #FAF8F5;
   border-bottom: 2px dashed rgba(0, 0, 0, 0.15);
 }
 
 .auth-modal-mascot {
-  width: 80px;
+  width: 70px;
   height: auto;
-  margin: 0 auto 10px;
+  margin: 0 auto 8px;
   display: block;
 }
 
 .auth-modal-title {
-  font-family: var(--font-hand);
-  font-size: 2.2rem;
+  font-family: var(--font-hand, 'Outfit', sans-serif);
+  font-size: 1.95rem;
   font-weight: 800;
   color: #00676A;
-  margin-bottom: 4px;
-  line-height: 1.1;
+  margin: 0 0 4px 0;
+  line-height: 1.15;
 }
 
 .auth-modal-subtitle {
-  font-family: var(--font-body);
+  font-family: var(--font-body, sans-serif);
   font-size: 0.95rem;
   color: #718096;
+  margin: 0;
+  line-height: 1.35;
 }
 
 /* Auth Tabs */
 .auth-tabs {
   display: flex;
   background: #F3EFEA;
-  border-bottom: 2px solid #1A1A1A;
+  border-bottom: 2.5px solid #1A1A1A;
 }
 
 .auth-tab-btn {
   flex: 1;
-  padding: 12px;
+  padding: 12px 16px;
   border: none;
   background: none;
-  font-family: var(--font-hand);
-  font-size: 1.25rem;
+  font-family: var(--font-hand, 'Outfit', sans-serif);
+  font-size: 1.2rem;
   font-weight: 700;
   color: #718096;
   cursor: pointer;
@@ -124,12 +132,27 @@
 .auth-tab-btn.active {
   background: #FFFDF9;
   color: #00676A;
-  border-bottom: 3px solid #ED612B;
+  border-bottom: 3.5px solid #ED612B;
+}
+
+/* Error Box */
+.auth-error-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #FFF5F5;
+  border: 1.5px solid #E53E3E;
+  border-radius: 8px;
+  color: #C53030;
+  font-size: 0.9rem;
+  margin: 14px 22px 0 22px;
+  font-family: var(--font-body, sans-serif);
 }
 
 /* Form Body */
 .auth-form-body {
-  padding: 24px;
+  padding: 22px 26px 26px;
 }
 
 .auth-form-group {
@@ -138,8 +161,8 @@
 
 .auth-label {
   display: block;
-  font-family: var(--font-hand);
-  font-size: 1.1rem;
+  font-family: var(--font-hand, 'Outfit', sans-serif);
+  font-size: 1.05rem;
   font-weight: 700;
   color: #1A1A1A;
   margin-bottom: 6px;
@@ -153,21 +176,21 @@
 
 .auth-input-icon {
   position: absolute;
-  left: 12px;
+  left: 13px;
   color: #A0AEC0;
   pointer-events: none;
 }
 
 .auth-input {
   width: 100%;
-  padding: 11px 14px 11px 40px;
+  padding: 11px 14px 11px 42px;
   border: 2px solid #1A1A1A;
-  border-radius: 6px;
-  font-family: var(--font-body);
-  font-size: 0.95rem;
+  border-radius: 8px;
+  font-family: var(--font-body, sans-serif);
+  font-size: 0.98rem;
   background: #FFFFFF;
   outline: none;
-  transition: border-color 0.15s;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .auth-input:focus {
@@ -184,17 +207,18 @@
   cursor: pointer;
   display: flex;
   align-items: center;
+  padding: 4px;
 }
 
 .auth-submit-btn {
   width: 100%;
   background: #00676A;
   color: #FFFFFF;
-  font-family: var(--font-hand);
-  font-size: 1.35rem;
+  font-family: var(--font-hand, 'Outfit', sans-serif);
+  font-size: 1.3rem;
   font-weight: 700;
   padding: 12px;
-  border-radius: 6px;
+  border-radius: 8px;
   border: 2px solid #1A1A1A;
   box-shadow: 3px 4px 0px #1A1A1A;
   cursor: pointer;
@@ -208,50 +232,9 @@
   box-shadow: 4px 6px 0px #1A1A1A;
 }
 
-/* Demo / Social Logins */
-.auth-divider {
-  display: flex;
-  align-items: center;
-  text-align: center;
-  margin: 18px 0;
-  color: #A0AEC0;
-  font-family: var(--font-hand);
-  font-size: 1rem;
-}
-
-.auth-divider::before,
-.auth-divider::after {
-  content: '';
-  flex: 1;
-  border-bottom: 1px solid #E2E8F0;
-}
-
-.auth-divider span {
-  padding: 0 12px;
-}
-
-.auth-demo-btn {
-  width: 100%;
-  background: #FFF5F0;
-  color: #ED612B;
-  border: 2px dashed #ED612B;
-  font-family: var(--font-hand);
-  font-size: 1.15rem;
-  font-weight: 700;
-  padding: 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: all 0.15s;
-}
-
-.auth-demo-btn:hover {
-  background: #ED612B;
-  color: #FFFFFF;
-  border-style: solid;
+.auth-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 /* Account Drawer Styles */
@@ -268,8 +251,13 @@
   border-left: 2px solid #1A1A1A;
 }
 
+@keyframes slideInRight {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(0); }
+}
+
 .account-drawer-header {
-  padding: 24px;
+  padding: 20px 24px;
   background: #00676A;
   color: #FFFFFF;
   border-bottom: 2px solid #1A1A1A;
@@ -285,8 +273,8 @@
 }
 
 .account-avatar {
-  width: 54px;
-  height: 54px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   background: #FFFFFF;
   border: 2px solid #1A1A1A;
@@ -295,16 +283,16 @@
 }
 
 .account-user-name {
-  font-family: var(--font-hand);
-  font-size: 1.6rem;
+  font-family: var(--font-hand, 'Outfit', sans-serif);
+  font-size: 1.5rem;
   font-weight: 800;
   margin: 0 0 2px 0;
   color: #FFFFFF;
 }
 
 .account-user-tier {
-  font-family: var(--font-hand);
-  font-size: 0.95rem;
+  font-family: var(--font-hand, 'Outfit', sans-serif);
+  font-size: 0.9rem;
   background: #FFF0EB;
   color: #ED612B;
   padding: 2px 8px;
@@ -316,15 +304,15 @@
 .account-drawer-body {
   flex: 1;
   overflow-y: auto;
-  padding: 24px;
+  padding: 20px;
 }
 
 .account-section-title {
-  font-family: var(--font-hand);
-  font-size: 1.35rem;
+  font-family: var(--font-hand, 'Outfit', sans-serif);
+  font-size: 1.25rem;
   font-weight: 800;
   color: #1A1A1A;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -335,17 +323,17 @@
   border: 1.5px solid #1A1A1A;
   border-radius: 6px;
   padding: 12px 14px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   box-shadow: 2px 3px 0px rgba(0, 0, 0, 0.05);
 }
 
 .account-order-header {
   display: flex;
   justify-content: space-between;
-  font-family: var(--font-hand);
-  font-size: 1rem;
+  font-family: var(--font-hand, 'Outfit', sans-serif);
+  font-size: 0.95rem;
   color: #718096;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .account-order-status {
@@ -358,15 +346,15 @@
 }
 
 .account-logout-btn {
-  margin-top: 20px;
+  margin-top: 18px;
   width: 100%;
   background: #FFF5F5;
   color: #E53E3E;
   border: 2px solid #E53E3E;
-  font-family: var(--font-hand);
-  font-size: 1.2rem;
+  font-family: var(--font-hand, 'Outfit', sans-serif);
+  font-size: 1.15rem;
   font-weight: 700;
-  padding: 10px;
+  padding: 9px;
   border-radius: 6px;
   cursor: pointer;
   display: flex;
@@ -383,26 +371,7 @@
 
 @media (max-width: 480px) {
   .auth-modal-card {
-    border-radius: 8px;
-    box-shadow: 4px 6px 0px #1A1A1A;
-  }
-  .auth-modal-header {
-    padding: 24px 16px 14px;
-  }
-  .auth-modal-title {
-    font-size: 1.8rem;
-  }
-  .auth-form-body {
-    padding: 16px;
-  }
-  .account-drawer {
     max-width: 100%;
-    border-left: none;
-  }
-  .account-drawer-header {
-    padding: 18px 16px;
-  }
-  .account-drawer-body {
-    padding: 16px;
+    margin: 0 10px;
   }
 }

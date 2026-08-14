@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, Mail, Lock, User, Eye, EyeOff, Sparkles, AlertCircle, Loader2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Mail, Lock, User, Eye, EyeOff, AlertCircle, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import '../styles/auth.css';
 
@@ -11,7 +11,6 @@ export default function AuthModal() {
     closeAuth,
     login,
     signup,
-    loginAsDemo,
     isLoading,
     authError,
   } = useAuth();
@@ -20,6 +19,17 @@ export default function AuthModal() {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+
+  // Prevent background scrolling when modal is open
+  useEffect(() => {
+    if (isAuthModalOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [isAuthModalOpen]);
 
   if (!isAuthModalOpen) return null;
 
@@ -38,19 +48,19 @@ export default function AuthModal() {
         <div className="auth-modal-tape" />
 
         <button className="auth-modal-close" onClick={closeAuth} aria-label="Close">
-          <X size={18} strokeWidth={2.5} />
+          <X size={16} strokeWidth={2.5} />
         </button>
 
-        {/* Header */}
+        {/* Compact Header */}
         <div className="auth-modal-header">
           <img src="/assets/4.png" alt="Mascot" className="auth-modal-mascot" />
           <h2 className="auth-modal-title">
-            {authMode === 'login' ? 'Welcome Back, Maker!' : 'Join the Creative Club!'}
+            {authMode === 'login' ? 'Welcome Back, Maker!' : 'Join the Club!'}
           </h2>
           <p className="auth-modal-subtitle">
             {authMode === 'login'
-              ? 'Sign in to access your orders and maker points stored in database'
-              : 'Create your account and earn 50 welcome maker points'}
+              ? 'Sign in to access your orders & maker points'
+              : 'Create an account & start crafting today'}
           </p>
         </div>
 
@@ -74,20 +84,8 @@ export default function AuthModal() {
 
         {/* Error notification */}
         {authError && (
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            padding: '10px 14px',
-            background: '#FFF5F5',
-            border: '1.5px solid #E53E3E',
-            borderRadius: 8,
-            color: '#C53030',
-            fontSize: '0.9rem',
-            margin: '0 20px 12px 20px',
-            fontFamily: 'var(--font-body)',
-          }}>
-            <AlertCircle size={18} style={{ flexShrink: 0 }} />
+          <div className="auth-error-box">
+            <AlertCircle size={16} style={{ flexShrink: 0 }} />
             <span>{authError}</span>
           </div>
         )}
@@ -98,7 +96,7 @@ export default function AuthModal() {
             <div className="auth-form-group">
               <label className="auth-label">Full Name</label>
               <div className="auth-input-wrapper">
-                <User size={18} className="auth-input-icon" />
+                <User size={16} className="auth-input-icon" />
                 <input
                   type="text"
                   placeholder="e.g. Maya Sharma"
@@ -114,7 +112,7 @@ export default function AuthModal() {
           <div className="auth-form-group">
             <label className="auth-label">Email Address</label>
             <div className="auth-input-wrapper">
-              <Mail size={18} className="auth-input-icon" />
+              <Mail size={16} className="auth-input-icon" />
               <input
                 type="email"
                 placeholder="you@example.com"
@@ -129,7 +127,7 @@ export default function AuthModal() {
           <div className="auth-form-group">
             <label className="auth-label">Password</label>
             <div className="auth-input-wrapper">
-              <Lock size={18} className="auth-input-icon" />
+              <Lock size={16} className="auth-input-icon" />
               <input
                 type={showPassword ? 'text' : 'password'}
                 placeholder="••••••••"
@@ -144,34 +142,20 @@ export default function AuthModal() {
                 onClick={() => setShowPassword(!showPassword)}
                 aria-label="Toggle password"
               >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
           </div>
 
           <button type="submit" className="auth-submit-btn" disabled={isLoading}>
             {isLoading ? (
-              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                <Loader2 size={18} className="animate-spin" />
+              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                <Loader2 size={16} className="animate-spin" />
                 <span>Processing...</span>
               </span>
             ) : (
               <span>{authMode === 'login' ? 'Sign In' : 'Sign Up Free'}</span>
             )}
-          </button>
-
-          <div className="auth-divider">
-            <span>OR QUICK DEMO</span>
-          </div>
-
-          <button
-            type="button"
-            className="auth-demo-btn"
-            onClick={loginAsDemo}
-            disabled={isLoading}
-          >
-            <Sparkles size={16} />
-            <span>1-Click Test Login as Art Lover</span>
           </button>
         </form>
       </div>
