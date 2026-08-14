@@ -9,6 +9,7 @@ import AccountDrawer from './components/AccountDrawer';
 import SearchModal from './components/SearchModal';
 import QuickViewModal from './components/QuickViewModal';
 import CheckoutModal from './components/CheckoutModal';
+import AutoAuthPrompt from './components/AutoAuthPrompt';
 
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
@@ -103,6 +104,9 @@ export default function App() {
 
             {/* Authentication Modal (Sign In / Sign Up) */}
             <AuthModal />
+
+            {/* Auto Auth Prompt on Scroll */}
+            <AutoAuthPrompt />
 
             {/* Account / User Profile Drawer */}
             <AccountDrawer />
