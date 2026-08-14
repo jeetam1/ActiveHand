@@ -1,4 +1,5 @@
 import React from 'react';
+import { useCart } from '../context/CartContext';
 import '../styles/products.css';
 
 const kits = [
@@ -85,6 +86,24 @@ export default function NewArrivals({ onShopClick }) {
                 <span className="kit-diy-sub">DIY Kit</span>
               </h3>
               <span className="kit-price">{kit.price}</span>
+
+              <button 
+                type="button"
+                className="kit-add-cart-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  addToCart({
+                    id: kit.id,
+                    title: kit.title,
+                    price: kit.price,
+                    img: kit.img,
+                    url: 'https://rzp.io/l/B8kcvpZv'
+                  });
+                }}
+                aria-label={`Add ${kit.title} to bag`}
+              >
+                Add to Cart
+              </button>
               
               {/* Small star in bottom right corner */}
               {kit.hasCornerStar && (

@@ -20,8 +20,58 @@
   align-items: center;
 }
 
-.foot-brand-img {
-  height: 95px;
+.foot-brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.foot-brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 0.9;
+  font-family: var(--font-hand);
+}
+
+.foot-brand-active {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 1px;
+  text-shadow: 
+    -1.5px -1.5px 0 #000,  
+     1.5px -1.5px 0 #000,
+    -1.5px  1.5px 0 #000,
+     1.5px  1.5px 0 #000;
+}
+
+.foot-brand-hands {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: var(--orange);
+  line-height: 0.8;
+  margin: 1px 0;
+  text-shadow: 
+    -1.5px -1.5px 0 #000,  
+     1.5px -1.5px 0 #000,
+    -1.5px  1.5px 0 #000,
+     1.5px  1.5px 0 #000;
+}
+
+.foot-brand-diy {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 1.5px;
+  text-shadow: 
+    -1.5px -1.5px 0 #000,  
+     1.5px -1.5px 0 #000,
+    -1.5px  1.5px 0 #000,
+     1.5px  1.5px 0 #000;
+}
+
+.foot-brand-mascot {
+  height: 145px;
   width: auto;
   object-fit: contain;
 }
@@ -87,10 +137,10 @@
 }
 
 .foot-reader {
-  height: 90px;
+  height: 125px;
   width: auto;
   position: absolute;
-  bottom: -15px;
+  bottom: 15px;
   right: 0;
   object-fit: contain;
 }

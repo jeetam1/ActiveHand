@@ -14,11 +14,18 @@ export default function Footer({ onNavigate }) {
       <div className="foot-inner">
         {/* Col 1: Logo + mascot */}
         <div className="foot-brand">
-          <img 
-            src="/assets/9.png" 
-            alt="Active Hands DIY Kit" 
-            className="foot-brand-img" 
-          />
+          <div className="foot-brand-logo">
+            <div className="foot-brand-text">
+              <span className="foot-brand-active">ACTIVE</span>
+              <span className="foot-brand-hands">HANDS</span>
+              <span className="foot-brand-diy">DIY KIT</span>
+            </div>
+            <img 
+              src="/assets/9.png" 
+              alt="Active Hands DIY Kit Mascot" 
+              className="foot-brand-mascot" 
+            />
+          </div>
         </div>
 
         {/* Col 2: Quick Links */}
@@ -60,7 +67,7 @@ export default function Footer({ onNavigate }) {
           </div>
           
           <img 
-            src="/assets/footer_kid.png" 
+            src="/assets/10.png" 
             alt="Kid reading a book" 
             className="foot-reader" 
           />
