@@ -2,120 +2,120 @@
 {% load i18n static %}
 
 {% block content %}
-<div style="margin-bottom: 24px;">
-  <!-- Clean Dashboard Header -->
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid #E2E8F0;">
+<div style="width: 100%; margin-bottom: 28px;">
+  <!-- Clean Dashboard Header (Full Width) -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #E2E8F0; width: 100%;">
     <div>
-      <h2 style="font-size: 1.35rem; font-weight: 700; color: #0F172A; margin: 0 0 2px 0;">
+      <h2 style="font-size: 1.4rem; font-weight: 700; color: #0F172A; margin: 0 0 4px 0;">
         Store Overview
       </h2>
       <p style="margin: 0; font-size: 0.875rem; color: #64748B;">
-        Overview of live orders, inventory catalog, and store performance.
+        Live dispatch status, recent customer orders, and catalog inventory.
       </p>
     </div>
-    <div style="display: flex; gap: 8px;">
-      <a href="{% url 'admin:api_order_changelist' %}" class="button" style="text-decoration: none; padding: 7px 12px; font-size: 0.85rem;">
+    <div style="display: flex; gap: 10px;">
+      <a href="{% url 'admin:api_order_changelist' %}" class="button" style="text-decoration: none; padding: 8px 16px; font-size: 0.875rem;">
         View Orders
       </a>
-      <a href="{% url 'admin:api_product_add' %}" class="button" style="background: #2563EB !important; text-decoration: none; padding: 7px 12px; font-size: 0.85rem;">
+      <a href="{% url 'admin:api_product_add' %}" class="button" style="background: #2563EB !important; text-decoration: none; padding: 8px 16px; font-size: 0.875rem;">
         + Add Product
       </a>
     </div>
   </div>
 
-  <!-- Minimal KPI Grid -->
+  <!-- Full-Width Minimal KPI Grid -->
   {% if metrics %}
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 24px;">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; margin-bottom: 28px; width: 100%;">
     <!-- Metric 1: Revenue -->
-    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; padding: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-      <div style="font-size: 0.8rem; color: #64748B; font-weight: 500; margin-bottom: 4px;">Total Sales</div>
-      <div style="font-size: 1.4rem; font-weight: 700; color: #0F172A;">
+    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; padding: 18px 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+      <div style="font-size: 0.8rem; color: #64748B; font-weight: 500; margin-bottom: 6px;">Total Sales</div>
+      <div style="font-size: 1.5rem; font-weight: 700; color: #0F172A;">
         {{ metrics.total_revenue }}
       </div>
     </div>
 
     <!-- Metric 2: Total Orders -->
-    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; padding: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-      <div style="font-size: 0.8rem; color: #64748B; font-weight: 500; margin-bottom: 4px;">Total Orders</div>
-      <div style="font-size: 1.4rem; font-weight: 700; color: #0F172A;">
+    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; padding: 18px 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+      <div style="font-size: 0.8rem; color: #64748B; font-weight: 500; margin-bottom: 6px;">Total Orders</div>
+      <div style="font-size: 1.5rem; font-weight: 700; color: #0F172A;">
         {{ metrics.total_orders }}
       </div>
     </div>
 
     <!-- Metric 3: Active Orders -->
-    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; padding: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-      <div style="font-size: 0.8rem; color: #64748B; font-weight: 500; margin-bottom: 4px;">Active Orders</div>
-      <div style="font-size: 1.4rem; font-weight: 700; color: #2563EB;">
+    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; padding: 18px 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+      <div style="font-size: 0.8rem; color: #64748B; font-weight: 500; margin-bottom: 6px;">Active Orders</div>
+      <div style="font-size: 1.5rem; font-weight: 700; color: #2563EB;">
         {{ metrics.pending_orders }}
       </div>
     </div>
 
     <!-- Metric 4: Total Products -->
-    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; padding: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-      <div style="font-size: 0.8rem; color: #64748B; font-weight: 500; margin-bottom: 4px;">Products in Catalog</div>
-      <div style="font-size: 1.4rem; font-weight: 700; color: #0F172A;">
+    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; padding: 18px 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+      <div style="font-size: 0.8rem; color: #64748B; font-weight: 500; margin-bottom: 6px;">Products in Catalog</div>
+      <div style="font-size: 1.5rem; font-weight: 700; color: #0F172A;">
         {{ metrics.total_products }}
       </div>
     </div>
 
     <!-- Metric 5: Customers -->
-    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; padding: 16px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-      <div style="font-size: 0.8rem; color: #64748B; font-weight: 500; margin-bottom: 4px;">Customers</div>
-      <div style="font-size: 1.4rem; font-weight: 700; color: #0F172A;">
+    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; padding: 18px 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+      <div style="font-size: 0.8rem; color: #64748B; font-weight: 500; margin-bottom: 6px;">Customers</div>
+      <div style="font-size: 1.5rem; font-weight: 700; color: #0F172A;">
         {{ metrics.total_makers }}
       </div>
     </div>
   </div>
   {% endif %}
 
-  <!-- Recent Orders Table -->
+  <!-- Full-Width Recent Orders Table -->
   {% if metrics.recent_orders %}
-  <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); margin-bottom: 24px; overflow: hidden;">
-    <div style="padding: 12px 16px; background: #FFFFFF; border-bottom: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center;">
+  <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.03); margin-bottom: 28px; overflow: hidden; width: 100%;">
+    <div style="padding: 14px 20px; background: #FFFFFF; border-bottom: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center;">
       <span style="font-size: 0.95rem; font-weight: 600; color: #0F172A;">
-        Recent Orders
+        Recent Customer Orders
       </span>
       <a href="{% url 'admin:api_order_changelist' %}" style="color: #2563EB; font-weight: 500; font-size: 0.85rem; text-decoration: none;">
         View all orders &rarr;
       </a>
     </div>
 
-    <div style="overflow-x: auto;">
+    <div style="overflow-x: auto; width: 100%;">
       <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.875rem;">
         <thead>
           <tr style="background: #F8FAFC; border-bottom: 1px solid #E2E8F0;">
-            <th style="padding: 10px 14px; font-weight: 600; color: #475569; font-size: 0.8rem; text-transform: uppercase;">Order ID</th>
-            <th style="padding: 10px 14px; font-weight: 600; color: #475569; font-size: 0.8rem; text-transform: uppercase;">Customer</th>
-            <th style="padding: 10px 14px; font-weight: 600; color: #475569; font-size: 0.8rem; text-transform: uppercase;">City</th>
-            <th style="padding: 10px 14px; font-weight: 600; color: #475569; font-size: 0.8rem; text-transform: uppercase;">Total</th>
-            <th style="padding: 10px 14px; font-weight: 600; color: #475569; font-size: 0.8rem; text-transform: uppercase;">Status</th>
-            <th style="padding: 10px 14px; font-weight: 600; color: #475569; font-size: 0.8rem; text-transform: uppercase;">Action</th>
+            <th style="padding: 12px 18px; font-weight: 600; color: #475569; font-size: 0.8rem; text-transform: uppercase;">Order ID</th>
+            <th style="padding: 12px 18px; font-weight: 600; color: #475569; font-size: 0.8rem; text-transform: uppercase;">Customer</th>
+            <th style="padding: 12px 18px; font-weight: 600; color: #475569; font-size: 0.8rem; text-transform: uppercase;">City</th>
+            <th style="padding: 12px 18px; font-weight: 600; color: #475569; font-size: 0.8rem; text-transform: uppercase;">Total</th>
+            <th style="padding: 12px 18px; font-weight: 600; color: #475569; font-size: 0.8rem; text-transform: uppercase;">Status</th>
+            <th style="padding: 12px 18px; font-weight: 600; color: #475569; font-size: 0.8rem; text-transform: uppercase;">Action</th>
           </tr>
         </thead>
         <tbody>
           {% for ord in metrics.recent_orders %}
           <tr style="border-bottom: 1px solid #F1F5F9;">
-            <td style="padding: 10px 14px; font-weight: 600; color: #0F172A;">
+            <td style="padding: 12px 18px; font-weight: 600; color: #0F172A;">
               <a href="{% url 'admin:api_order_change' ord.id %}" style="color: #2563EB; text-decoration: none;">
                 #{{ ord.order_number }}
               </a>
             </td>
-            <td style="padding: 10px 14px; color: #1E293B;">
+            <td style="padding: 12px 18px; color: #1E293B;">
               {{ ord.shipping_name }}
               <div style="font-size: 0.78rem; color: #64748B;">{{ ord.shipping_phone }}</div>
             </td>
-            <td style="padding: 10px 14px; color: #475569;">
+            <td style="padding: 12px 18px; color: #475569;">
               {{ ord.shipping_city }}
             </td>
-            <td style="padding: 10px 14px; font-weight: 600; color: #0F172A;">
+            <td style="padding: 12px 18px; font-weight: 600; color: #0F172A;">
               {{ ord.total_amount }}
             </td>
-            <td style="padding: 10px 14px;">
+            <td style="padding: 12px 18px;">
               <span class="badge-status {% if 'Delivered' in ord.status %}badge-delivered{% elif 'Transit' in ord.status %}badge-transit{% elif 'Processing' in ord.status %}badge-processing{% else %}badge-confirmed{% endif %}">
                 {{ ord.status }}
               </span>
             </td>
-            <td style="padding: 10px 14px;">
+            <td style="padding: 12px 18px;">
               <a href="{% url 'admin:api_order_change' ord.id %}" style="color: #2563EB; font-weight: 500; text-decoration: none; font-size: 0.85rem;">
                 Details &rarr;
               </a>
@@ -129,6 +129,8 @@
   {% endif %}
 </div>
 
-<!-- Standard App Lists -->
-{{ block.super }}
+<!-- Standard App Lists (Full Width) -->
+<div style="width: 100%;">
+  {{ block.super }}
+</div>
 {% endblock %}

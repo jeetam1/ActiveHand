@@ -20,22 +20,60 @@
     --accent-blue: #2563EB;
   }
 
+  * {
+    box-sizing: border-box;
+  }
+
   body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
     background-color: var(--bg-main) !important;
     color: var(--text-primary) !important;
-    margin: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  /* Full-width Layout Containers */
+  #container {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  #content {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 24px 36px !important;
+    box-sizing: border-box !important;
+    display: block !important;
+    margin: 0 !important;
+  }
+
+  #content-main {
+    width: 100% !important;
+    max-width: 100% !important;
+    float: none !important;
+    box-sizing: border-box !important;
+  }
+
+  #content-related {
+    display: none !important;
   }
 
   /* Clean Minimal Header */
   #header {
     background: #0F172A !important;
     color: #FFFFFF !important;
-    padding: 14px 24px !important;
+    padding: 14px 36px !important;
     border-bottom: 1px solid #1E293B !important;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   #branding h1 {
@@ -75,10 +113,12 @@
   div.breadcrumbs {
     background: #FFFFFF !important;
     border-bottom: 1px solid var(--border-subtle) !important;
-    padding: 10px 24px !important;
+    padding: 12px 36px !important;
     font-size: 0.85rem !important;
     font-weight: 500 !important;
     color: var(--text-secondary) !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   div.breadcrumbs a {
@@ -91,7 +131,7 @@
     text-decoration: underline;
   }
 
-  /* Cards & Modules */
+  /* Cards & Modules Full Width */
   .module {
     background: var(--bg-card) !important;
     border-radius: 8px !important;
@@ -99,6 +139,7 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
     margin-bottom: 20px !important;
     overflow: hidden;
+    width: 100% !important;
   }
 
   .module caption, .module h2 {
@@ -111,10 +152,24 @@
     letter-spacing: -0.1px;
   }
 
-  /* Tables */
+  /* Tables Full Width */
+  #changelist {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex !important;
+    flex-direction: row-reverse !important;
+    gap: 24px !important;
+    align-items: flex-start !important;
+  }
+
+  #changelist-form {
+    flex: 1 !important;
+    width: 100% !important;
+  }
+
   #changelist table {
     border-collapse: collapse;
-    width: 100%;
+    width: 100% !important;
     border-radius: 6px;
     overflow: hidden;
   }
@@ -126,7 +181,7 @@
     font-size: 0.8rem !important;
     text-transform: uppercase;
     letter-spacing: 0.4px;
-    padding: 10px 14px !important;
+    padding: 11px 16px !important;
     border-bottom: 1px solid var(--border-subtle) !important;
   }
 
@@ -139,10 +194,32 @@
   }
 
   #changelist tbody td {
-    padding: 10px 14px !important;
+    padding: 12px 16px !important;
     vertical-align: middle;
     border-bottom: 1px solid var(--border-subtle) !important;
     font-size: 0.875rem;
+  }
+
+  #changelist #changelist-filter {
+    position: static !important;
+    top: auto !important;
+    right: auto !important;
+    width: 240px !important;
+    flex-shrink: 0 !important;
+    background: #FFFFFF !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: 8px !important;
+    margin: 0 !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03) !important;
+    overflow: hidden;
+  }
+
+  #changelist #changelist-filter h2 {
+    background: #F8FAFC !important;
+    padding: 10px 14px !important;
+    font-size: 0.85rem !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
+    color: #0F172A !important;
   }
 
   /* Action Buttons & Submit */
@@ -154,7 +231,7 @@
     font-family: inherit !important;
     font-weight: 500 !important;
     font-size: 0.875rem !important;
-    padding: 8px 14px !important;
+    padding: 8px 16px !important;
     cursor: pointer;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
     transition: background 0.15s ease !important;
@@ -177,7 +254,7 @@
   input[type=number], input[type=tel], textarea, select {
     border: 1px solid #CBD5E1 !important;
     border-radius: 6px !important;
-    padding: 7px 10px !important;
+    padding: 8px 12px !important;
     font-size: 0.875rem !important;
     font-family: inherit !important;
     color: var(--text-primary) !important;
