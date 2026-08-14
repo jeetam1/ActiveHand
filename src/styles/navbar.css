@@ -145,8 +145,26 @@
 }
 
 @media (max-width: 900px) {
+  .nav-inner {
+    padding: 0 16px;
+    height: 70px;
+  }
+  .nav-logo-img {
+    height: 48px;
+  }
+  .nav-icons {
+    gap: 12px;
+  }
   .nav-links { display: none; }
   .nav-hamburger { display: block; }
-  .nav-mobile { display: flex; }
+  .nav-mobile { 
+    display: flex;
+    padding: 16px 20px 24px;
+    animation: fadeIn 0.2s ease-out;
+  }
+  .nav-mobile-link {
+    padding: 12px 6px;
+    font-size: 1.3rem;
+  }
 }
 

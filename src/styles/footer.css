@@ -162,16 +162,33 @@
   .foot-inner {
     grid-template-columns: 1fr 1fr;
     gap: 32px;
+    padding: 0 24px 30px;
   }
 }
 
 @media (max-width: 600px) {
   .foot-inner {
     grid-template-columns: 1fr;
+    gap: 28px;
+    padding: 0 20px 24px;
+  }
+  .foot-brand-mascot {
+    height: 110px;
+  }
+  .foot-brand-active {
+    font-size: 1.5rem;
+  }
+  .foot-brand-hands {
+    font-size: 2.3rem;
   }
   .foot-reader {
     position: static;
-    margin-top: 14px;
+    margin: 10px auto 0;
+    height: 100px;
+    display: block;
+  }
+  .foot-copy {
+    padding: 14px 20px;
   }
 }
 

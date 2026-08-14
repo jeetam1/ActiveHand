@@ -381,3 +381,25 @@
   color: #ED612B;
   text-decoration: underline;
 }
+
+@media (max-width: 480px) {
+  .cart-drawer {
+    max-width: 100%;
+    border-left: none;
+  }
+  .cart-drawer-header {
+    padding: 16px;
+  }
+  .cart-drawer-body {
+    padding: 16px;
+  }
+  .cart-drawer-footer {
+    padding: 16px;
+  }
+  .cart-drawer-title {
+    font-size: 1.45rem;
+  }
+  .cart-shipping-tier {
+    padding: 10px 16px;
+  }
+}

@@ -497,6 +497,7 @@
 @media (max-width: 1024px) {
   .shop-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 28px 20px;
   }
   .shop-sub-banner {
     flex-direction: column;
@@ -515,27 +516,66 @@
 }
 
 @media (max-width: 640px) {
+  .shop-page {
+    padding: 24px 0 60px;
+  }
+  .shop-inner {
+    padding: 0 16px;
+  }
+  .shop-filter-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding: 4px 8px 12px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 8px;
+  }
+  .shop-filter-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .shop-tab-btn {
+    font-size: 1rem;
+    padding: 8px 16px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
   .shop-grid {
     grid-template-columns: 1fr;
-    max-width: 330px;
+    max-width: 340px;
     margin-left: auto;
     margin-right: auto;
+    gap: 30px;
   }
-  .shop-title {
-    font-size: 2.5rem;
+  .shop-card {
+    padding: 20px 16px 18px;
+  }
+  .shop-img-box {
+    height: 200px;
+  }
+  .shop-sub-banner {
+    padding: 30px 16px;
+    margin: 40px 0 50px;
+    gap: 20px;
+  }
+  .shop-sub-mascot {
+    width: 100px;
   }
   .shop-sub-title {
-    font-size: 1.8rem;
+    font-size: 1.7rem;
+  }
+  .shop-sub-text {
+    font-size: 1.1rem;
   }
   .shop-sub-form {
     flex-direction: column;
     width: 100%;
   }
-  .shop-filter-tabs {
-    gap: 8px;
+  .shop-sub-btn {
+    justify-content: center;
+    width: 100%;
   }
-  .shop-tab-btn {
-    font-size: 1rem;
-    padding: 6px 14px;
+  .shop-trust-grid {
+    gap: 18px;
   }
 }

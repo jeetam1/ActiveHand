@@ -286,10 +286,42 @@
 @media (max-width: 768px) {
   .quickview-modal {
     grid-template-columns: 1fr;
+    max-height: 85vh;
+    overflow-y: auto;
   }
   .quickview-img-box {
     border-right: none;
     border-bottom: 2px solid #1A1A1A;
     padding: 20px;
+  }
+  .quickview-info {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-overlay {
+    padding: 12px;
+  }
+  .search-modal-header {
+    padding: 14px 16px;
+  }
+  .search-modal-input {
+    font-size: 1.15rem;
+  }
+  .checkout-header {
+    padding: 16px;
+  }
+  .checkout-body {
+    padding: 16px;
+  }
+  .checkout-payment-methods {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .shop-card-quick-btn {
+    opacity: 1;
+    font-size: 0.85rem;
+    padding: 3px 10px;
   }
 }

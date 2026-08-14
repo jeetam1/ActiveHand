@@ -380,3 +380,29 @@
   background: #E53E3E;
   color: #FFFFFF;
 }
+
+@media (max-width: 480px) {
+  .auth-modal-card {
+    border-radius: 8px;
+    box-shadow: 4px 6px 0px #1A1A1A;
+  }
+  .auth-modal-header {
+    padding: 24px 16px 14px;
+  }
+  .auth-modal-title {
+    font-size: 1.8rem;
+  }
+  .auth-form-body {
+    padding: 16px;
+  }
+  .account-drawer {
+    max-width: 100%;
+    border-left: none;
+  }
+  .account-drawer-header {
+    padding: 18px 16px;
+  }
+  .account-drawer-body {
+    padding: 16px;
+  }
+}
