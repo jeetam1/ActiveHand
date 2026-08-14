@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { api } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -15,6 +16,38 @@ export function AuthProvider({ children }) {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState('login'); // 'login' | 'signup'
   const [isAccountOpen, setIsAccountOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [authError, setAuthError] = useState('');
+
+  // Fetch current authenticated user from Django backend
+  const refreshUser = useCallback(async () => {
+    const token = api.getToken();
+    if (!token) return null;
+    try {
+      const userData = await api.getCurrentUser();
+      if (userData) {
+        setUser(userData);
+        localStorage.setItem('activehands_user', JSON.stringify(userData));
+        return userData;
+      }
+    } catch (e) {
+      console.warn('Could not refresh user session:', e);
+      // If token is invalid or expired
+      if (e.message && e.message.includes('Invalid token')) {
+        api.setToken(null);
+        setUser(null);
+        localStorage.removeItem('activehands_user');
+      }
+    }
+    return null;
+  }, []);
+
+  // Check auth session on startup
+  useEffect(() => {
+    if (api.getToken()) {
+      refreshUser();
+    }
+  }, [refreshUser]);
 
   useEffect(() => {
     try {
@@ -28,89 +61,72 @@ export function AuthProvider({ children }) {
     }
   }, [user]);
 
-  const login = (email, password) => {
-    // Basic validation / mock login
-    const name = email.split('@')[0];
-    const loggedUser = {
-      id: 'user_' + Date.now(),
-      name: name.charAt(0).toUpperCase() + name.slice(1),
-      email: email,
-      joinedDate: 'August 2026',
-      points: 120,
-      tier: 'Master Crafter ⭐',
-      avatar: '/assets/4.png',
-      orders: [
-        {
-          id: 'AH-84920',
-          date: '10 Aug 2026',
-          items: ['Mosaic Art Tray Kit'],
-          total: '₹899.00',
-          status: 'Delivered',
-        },
-        {
-          id: 'AH-71829',
-          date: '02 Aug 2026',
-          items: ['Book Binding DIY Kit', 'Weaving Loom DIY Kit'],
-          total: '₹1,698.00',
-          status: 'In Transit 🚚',
-        },
-      ],
-      savedAddresses: [
-        {
-          id: 'addr_1',
-          name: name.charAt(0).toUpperCase() + name.slice(1),
-          address: '42, Craft Lane, Green Park',
-          city: 'Bengaluru',
-          pincode: '560034',
-          phone: '+91 98765 43210',
-          isDefault: true,
-        },
-      ],
-    };
-    setUser(loggedUser);
-    setIsAuthModalOpen(false);
-    return true;
+  const login = async (email, password) => {
+    setIsLoading(true);
+    setAuthError('');
+    try {
+      const res = await api.login(email, password);
+      if (res && res.user) {
+        setUser(res.user);
+        setIsAuthModalOpen(false);
+        setIsLoading(false);
+        return { success: true, user: res.user };
+      }
+    } catch (err) {
+      setIsLoading(false);
+      setAuthError(err.message || 'Login failed. Please check your credentials.');
+      return { success: false, error: err.message };
+    }
   };
 
-  const signup = (name, email, password) => {
-    const newUser = {
-      id: 'user_' + Date.now(),
-      name: name,
-      email: email,
-      joinedDate: 'August 2026',
-      points: 50,
-      tier: 'Junior Maker 🌱',
-      avatar: '/assets/9.png',
-      orders: [],
-      savedAddresses: [],
-    };
-    setUser(newUser);
-    setIsAuthModalOpen(false);
-    return true;
+  const signup = async (name, email, password) => {
+    setIsLoading(true);
+    setAuthError('');
+    try {
+      const res = await api.register(name, email, password);
+      if (res && res.user) {
+        setUser(res.user);
+        setIsAuthModalOpen(false);
+        setIsLoading(false);
+        return { success: true, user: res.user };
+      }
+    } catch (err) {
+      setIsLoading(false);
+      setAuthError(err.message || 'Signup failed. Please try again.');
+      return { success: false, error: err.message };
+    }
   };
 
-  const loginAsDemo = () => {
-    login('artlover@activehands.com', 'password123');
+  const loginAsDemo = async () => {
+    return await login('artlover@activehands.com', 'password123');
   };
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      await api.logout();
+    } catch (e) {
+      console.warn('Logout error:', e);
+    }
     setUser(null);
     setIsAccountOpen(false);
   };
 
   const openAuth = (mode = 'login') => {
     setAuthMode(mode);
+    setAuthError('');
     setIsAuthModalOpen(true);
   };
 
   const closeAuth = () => {
     setIsAuthModalOpen(false);
+    setAuthError('');
   };
 
   return (
     <AuthContext.Provider
       value={{
         user,
+        setUser,
         isAuthenticated: !!user,
         isAuthModalOpen,
         authMode,
@@ -124,6 +140,9 @@ export function AuthProvider({ children }) {
         signup,
         loginAsDemo,
         logout,
+        refreshUser,
+        isLoading,
+        authError,
       }}
     >
       {children}

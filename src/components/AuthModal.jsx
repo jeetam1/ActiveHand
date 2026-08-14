@@ -1,10 +1,21 @@
 import React, { useState } from 'react';
-import { X, Mail, Lock, User, Eye, EyeOff, Sparkles, ArrowRight } from 'lucide-react';
+import { X, Mail, Lock, User, Eye, EyeOff, Sparkles, AlertCircle, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import '../styles/auth.css';
 
 export default function AuthModal() {
-  const { isAuthModalOpen, authMode, setAuthMode, closeAuth, login, signup, loginAsDemo } = useAuth();
+  const {
+    isAuthModalOpen,
+    authMode,
+    setAuthMode,
+    closeAuth,
+    login,
+    signup,
+    loginAsDemo,
+    isLoading,
+    authError,
+  } = useAuth();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -12,12 +23,12 @@ export default function AuthModal() {
 
   if (!isAuthModalOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (authMode === 'login') {
-      login(email, password);
+      await login(email, password);
     } else {
-      signup(name, email, password);
+      await signup(name, email, password);
     }
   };
 
@@ -38,8 +49,8 @@ export default function AuthModal() {
           </h2>
           <p className="auth-modal-subtitle">
             {authMode === 'login'
-              ? 'Sign in to access your orders and maker points'
-              : 'Create your account and earn 50 welcome points'}
+              ? 'Sign in to access your orders and maker points stored in database'
+              : 'Create your account and earn 50 welcome maker points'}
           </p>
         </div>
 
@@ -60,6 +71,26 @@ export default function AuthModal() {
             Create Account
           </button>
         </div>
+
+        {/* Error notification */}
+        {authError && (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            padding: '10px 14px',
+            background: '#FFF5F5',
+            border: '1.5px solid #E53E3E',
+            borderRadius: 8,
+            color: '#C53030',
+            fontSize: '0.9rem',
+            margin: '0 20px 12px 20px',
+            fontFamily: 'var(--font-body)',
+          }}>
+            <AlertCircle size={18} style={{ flexShrink: 0 }} />
+            <span>{authError}</span>
+          </div>
+        )}
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="auth-form-body">
@@ -118,15 +149,27 @@ export default function AuthModal() {
             </div>
           </div>
 
-          <button type="submit" className="auth-submit-btn">
-            <span>{authMode === 'login' ? 'Sign In to Bag' : 'Sign Up Free'}</span>
+          <button type="submit" className="auth-submit-btn" disabled={isLoading}>
+            {isLoading ? (
+              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                <Loader2 size={18} className="animate-spin" />
+                <span>Processing...</span>
+              </span>
+            ) : (
+              <span>{authMode === 'login' ? 'Sign In' : 'Sign Up Free'}</span>
+            )}
           </button>
 
           <div className="auth-divider">
             <span>OR QUICK DEMO</span>
           </div>
 
-          <button type="button" className="auth-demo-btn" onClick={loginAsDemo}>
+          <button
+            type="button"
+            className="auth-demo-btn"
+            onClick={loginAsDemo}
+            disabled={isLoading}
+          >
             <Sparkles size={16} />
             <span>1-Click Test Login as Art Lover</span>
           </button>

@@ -5,6 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "backend": "python backend/manage.py runserver 8000",
+    "seed": "python backend/manage.py seed_data",
+    "migrate": "python backend/manage.py migrate",
     "build": "vite build",
     "preview": "vite preview"
   },
