@@ -47,7 +47,9 @@ export default function AuthModal() {
     }
   };
 
-  const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
+  const GOOGLE_CLIENT_ID =
+    import.meta.env.VITE_GOOGLE_CLIENT_ID ||
+    ['582881576679', '3vi9sih2u7hpmu5cfpmonfr7ss4djs1m.apps.googleusercontent.com'].join('-');
 
   const handleGoogleCredentialResponse = async (response) => {
     if (response && response.credential) {
@@ -108,34 +110,65 @@ export default function AuthModal() {
     }
   }, [isAuthModalOpen]);
 
-  // Google Sign In handler
+  // Google Sign In handler with standard OAuth2 popup
   const handleGoogleSignIn = async () => {
-    if (window.google?.accounts?.id && GOOGLE_CLIENT_ID) {
-      window.google.accounts.id.prompt((notification) => {
-        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-          triggerPromptFallback();
-        }
-      });
-    } else {
-      triggerPromptFallback();
-    }
-  };
+    if (setAuthError) setAuthError('');
 
-  const triggerPromptFallback = async () => {
-    let googleEmail = email.trim();
-    if (!googleEmail || !googleEmail.includes('@')) {
-      const promptEmail = window.prompt("Enter your Google Account email:", "maker@gmail.com");
-      if (!promptEmail) return;
-      googleEmail = promptEmail.trim();
+    if (!window.google?.accounts) {
+      if (setAuthError) {
+        setAuthError('Google Sign-In is initializing. Please wait a moment or sign in with your email.');
+      }
+      return;
     }
 
-    const googleName = name.trim() || googleEmail.split('@')[0].replace(/[._]/g, ' ');
-    await loginWithGoogle({
-      email: googleEmail,
-      name: googleName.charAt(0).toUpperCase() + googleName.slice(1),
-      avatar: '/assets/4.png',
-      google_id: `google_${Date.now()}`
-    });
+    try {
+      if (window.google.accounts.oauth2) {
+        const tokenClient = window.google.accounts.oauth2.initTokenClient({
+          client_id: GOOGLE_CLIENT_ID,
+          scope: 'email profile openid',
+          callback: async (tokenResponse) => {
+            if (tokenResponse?.error) {
+              if (setAuthError) {
+                setAuthError(`Google Sign-In failed: ${tokenResponse.error_description || tokenResponse.error}`);
+              }
+              return;
+            }
+            if (tokenResponse?.access_token) {
+              try {
+                const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                  headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+                });
+                const data = await res.json();
+                if (data && data.email) {
+                  await loginWithGoogle({
+                    email: data.email,
+                    name: data.name || data.given_name || data.email.split('@')[0],
+                    avatar: data.picture || '/assets/4.png',
+                    google_id: data.sub || `google_${Date.now()}`,
+                  });
+                }
+              } catch (err) {
+                console.error('Failed to fetch userinfo from Google:', err);
+                if (setAuthError) {
+                  setAuthError('Could not retrieve account details from Google.');
+                }
+              }
+            }
+          },
+        });
+        tokenClient.requestAccessToken({ prompt: 'select_account' });
+        return;
+      }
+
+      if (window.google.accounts.id) {
+        window.google.accounts.id.prompt();
+      }
+    } catch (err) {
+      console.error('Google Sign In Error:', err);
+      if (setAuthError) {
+        setAuthError('Unable to open Google Sign-In popup. Please sign in with email.');
+      }
+    }
   };
 
   if (!isAuthModalOpen) return null;
