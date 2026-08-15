@@ -41,8 +41,7 @@ class ApiService {
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        // Extract error message
-        let errorMsg = 'An error occurred';
+        let errorMsg = '';
         if (data.error) {
           errorMsg = data.error;
         } else if (data.detail) {
@@ -54,17 +53,33 @@ class ApiService {
         } else if (typeof data === 'object' && Object.keys(data).length > 0) {
           const firstKey = Object.keys(data)[0];
           if (Array.isArray(data[firstKey])) {
-            errorMsg = data[firstKey].join(', ');
+            errorMsg = `${firstKey}: ${data[firstKey].join(', ')}`;
           } else if (typeof data[firstKey] === 'string') {
             errorMsg = data[firstKey];
           }
         }
+
+        if (!errorMsg) {
+          if (response.status === 404) {
+            errorMsg = 'Backend endpoint not found. Please verify your Render backend URL.';
+          } else if (response.status === 502 || response.status === 503) {
+            errorMsg = 'Backend server is waking up on Render. Please wait 15 seconds and try again.';
+          } else if (response.status === 500) {
+            errorMsg = 'Internal server error on backend. Please check server logs.';
+          } else {
+            errorMsg = `Server error (${response.status}). Please try again.`;
+          }
+        }
+
         throw new Error(errorMsg);
       }
 
       return data;
     } catch (err) {
       console.error(`API Error on [${options.method || 'GET'} ${endpoint}]:`, err);
+      if (err.name === 'TypeError' && err.message && err.message.toLowerCase().includes('fetch')) {
+        throw new Error('Cannot connect to backend server. The Render service may be starting up or sleeping. Please wait 15 seconds and try again.');
+      }
       throw err;
     }
   }
