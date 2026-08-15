@@ -1,7 +1,9 @@
 from django.urls import path
 from .views import (
     ApiRootView,
-    RegisterView, LoginView, LogoutView, CurrentUserView,
+    RegisterView, LoginView, GoogleAuthView,
+    ForgotPasswordView, ResetPasswordView,
+    LogoutView, CurrentUserView,
     ProductListView, CartListView, AddToCartView, UpdateCartItemView,
     RemoveCartItemView, ClearCartView, SyncCartView,
     WishlistListView, ToggleWishlistView,
@@ -14,6 +16,9 @@ urlpatterns = [
     # Auth Endpoints
     path('auth/register/', RegisterView.as_view(), name='auth-register'),
     path('auth/login/', LoginView.as_view(), name='auth-login'),
+    path('auth/google/', GoogleAuthView.as_view(), name='auth-google'),
+    path('auth/forgot-password/', ForgotPasswordView.as_view(), name='auth-forgot-password'),
+    path('auth/reset-password/', ResetPasswordView.as_view(), name='auth-reset-password'),
     path('auth/logout/', LogoutView.as_view(), name='auth-logout'),
     path('auth/me/', CurrentUserView.as_view(), name='auth-me'),
 

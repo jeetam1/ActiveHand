@@ -43,15 +43,20 @@ class ApiService {
       if (!response.ok) {
         // Extract error message
         let errorMsg = 'An error occurred';
-        if (data.error) errorMsg = data.error;
-        else if (data.message) errorMsg = data.message;
-        else if (data.non_field_errors) errorMsg = data.non_field_errors.join(' ');
-        else if (typeof data === 'object') {
+        if (data.error) {
+          errorMsg = data.error;
+        } else if (data.detail) {
+          errorMsg = data.detail;
+        } else if (data.message) {
+          errorMsg = data.message;
+        } else if (data.non_field_errors) {
+          errorMsg = Array.isArray(data.non_field_errors) ? data.non_field_errors.join(' ') : data.non_field_errors;
+        } else if (typeof data === 'object' && Object.keys(data).length > 0) {
           const firstKey = Object.keys(data)[0];
-          if (firstKey && Array.isArray(data[firstKey])) {
-            errorMsg = `${firstKey}: ${data[firstKey].join(', ')}`;
-          } else if (firstKey) {
-            errorMsg = `${firstKey}: ${data[firstKey]}`;
+          if (Array.isArray(data[firstKey])) {
+            errorMsg = data[firstKey].join(', ');
+          } else if (typeof data[firstKey] === 'string') {
+            errorMsg = data[firstKey];
           }
         }
         throw new Error(errorMsg);
@@ -85,6 +90,31 @@ class ApiService {
       this.setToken(data.token);
     }
     return data;
+  }
+
+  async loginWithGoogle({ email, name, avatar, google_id }) {
+    const data = await this.request('/auth/google/', {
+      method: 'POST',
+      body: JSON.stringify({ email, name, avatar, google_id }),
+    });
+    if (data.token) {
+      this.setToken(data.token);
+    }
+    return data;
+  }
+
+  async forgotPassword(email) {
+    return await this.request('/auth/forgot-password/', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+  }
+
+  async resetPassword(email, code, new_password) {
+    return await this.request('/auth/reset-password/', {
+      method: 'POST',
+      body: JSON.stringify({ email, code, new_password }),
+    });
   }
 
   async logout() {

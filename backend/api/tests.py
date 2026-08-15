@@ -33,6 +33,24 @@ class ActiveHandsApiTestCase(TestCase):
         self.assertIn('token', response.data)
         self.assertEqual(response.data['user']['email'], 'testmaker@activehands.com')
 
+    def test_user_login_no_account(self):
+        response = self.client.post('/api/auth/login/', {
+            'email': 'nonexistent@activehands.com',
+            'password': 'somepassword'
+        })
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('error', response.data)
+        self.assertEqual(response.data['error'], 'No account found with this email. Please create an account first.')
+
+    def test_user_login_wrong_password(self):
+        response = self.client.post('/api/auth/login/', {
+            'email': 'testmaker@activehands.com',
+            'password': 'wrongpassword'
+        })
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('error', response.data)
+        self.assertEqual(response.data['error'], 'Incorrect password. Please try again.')
+
     def test_user_registration(self):
         response = self.client.post('/api/auth/register/', {
             'name': 'New Crafter',
@@ -42,6 +60,68 @@ class ActiveHandsApiTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertIn('token', response.data)
         self.assertEqual(response.data['user']['name'], 'New Crafter')
+
+    def test_google_auth_new_and_existing_user(self):
+        # New Google user
+        response = self.client.post('/api/auth/google/', {
+            'email': 'googlemaker@activehands.com',
+            'name': 'Google Maker',
+            'avatar': 'https://example.com/avatar.jpg'
+        })
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('token', response.data)
+        self.assertEqual(response.data['user']['name'], 'Google Maker')
+        self.assertEqual(response.data['user']['points'], 50)
+
+        # Existing Google user
+        response2 = self.client.post('/api/auth/google/', {
+            'email': 'googlemaker@activehands.com',
+            'name': 'Google Maker Updated'
+        })
+        self.assertEqual(response2.status_code, status.HTTP_200_OK)
+        self.assertIn('token', response2.data)
+
+    def test_forgot_and_reset_password_flow(self):
+        # Forgot password for non-existent email
+        res_nonexistent = self.client.post('/api/auth/forgot-password/', {
+            'email': 'nobody@activehands.com'
+        })
+        self.assertEqual(res_nonexistent.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('No account found with this email', res_nonexistent.data['error'])
+
+        # Forgot password for existing email
+        res_forgot = self.client.post('/api/auth/forgot-password/', {
+            'email': 'testmaker@activehands.com'
+        })
+        self.assertEqual(res_forgot.status_code, status.HTTP_200_OK)
+        self.assertTrue(res_forgot.data['success'])
+        code = res_forgot.data['reset_code']
+        self.assertEqual(len(code), 6)
+
+        # Reset password with invalid code
+        res_invalid = self.client.post('/api/auth/reset-password/', {
+            'email': 'testmaker@activehands.com',
+            'code': '000000',
+            'new_password': 'brandnewpassword456'
+        })
+        self.assertEqual(res_invalid.status_code, status.HTTP_400_BAD_REQUEST)
+
+        # Reset password with valid code
+        res_reset = self.client.post('/api/auth/reset-password/', {
+            'email': 'testmaker@activehands.com',
+            'code': code,
+            'new_password': 'brandnewpassword456'
+        })
+        self.assertEqual(res_reset.status_code, status.HTTP_200_OK)
+        self.assertTrue(res_reset.data['success'])
+
+        # Verify user can log in with new password
+        res_login = self.client.post('/api/auth/login/', {
+            'email': 'testmaker@activehands.com',
+            'password': 'brandnewpassword456'
+        })
+        self.assertEqual(res_login.status_code, status.HTTP_200_OK)
+        self.assertIn('token', res_login.data)
 
     def test_cart_operations(self):
         # Authenticate

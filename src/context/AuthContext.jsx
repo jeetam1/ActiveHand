@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { api } from '../services/api';
 
@@ -96,6 +97,52 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const loginWithGoogle = async (googleUser) => {
+    setIsLoading(true);
+    setAuthError('');
+    try {
+      const res = await api.loginWithGoogle(googleUser);
+      if (res && res.user) {
+        setUser(res.user);
+        setIsAuthModalOpen(false);
+        setIsLoading(false);
+        return { success: true, user: res.user };
+      }
+    } catch (err) {
+      setIsLoading(false);
+      setAuthError(err.message || 'Google Sign-In failed. Please try again.');
+      return { success: false, error: err.message };
+    }
+  };
+
+  const forgotPassword = async (email) => {
+    setIsLoading(true);
+    setAuthError('');
+    try {
+      const res = await api.forgotPassword(email);
+      setIsLoading(false);
+      return { success: true, ...res };
+    } catch (err) {
+      setIsLoading(false);
+      setAuthError(err.message || 'Could not send reset code.');
+      return { success: false, error: err.message };
+    }
+  };
+
+  const resetPassword = async (email, code, newPassword) => {
+    setIsLoading(true);
+    setAuthError('');
+    try {
+      const res = await api.resetPassword(email, code, newPassword);
+      setIsLoading(false);
+      return { success: true, ...res };
+    } catch (err) {
+      setIsLoading(false);
+      setAuthError(err.message || 'Password reset failed.');
+      return { success: false, error: err.message };
+    }
+  };
+
   const logout = async () => {
     try {
       await api.logout();
@@ -141,10 +188,14 @@ export function AuthProvider({ children }) {
         closeAccount: () => setIsAccountOpen(false),
         login,
         signup,
+        loginWithGoogle,
+        forgotPassword,
+        resetPassword,
         logout,
         refreshUser,
         isLoading,
         authError,
+        setAuthError,
       }}
     >
       {children}

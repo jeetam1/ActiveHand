@@ -122,6 +122,31 @@ export default function Navbar({ activePage = 'home', onNavigate, onOpenSearch }
               {l.label}
             </a>
           ))}
+          <button
+            type="button"
+            className="nav-mobile-link"
+            style={{
+              background: '#00676A',
+              color: '#FFFFFF',
+              border: '2px solid #1A1A1A',
+              borderRadius: 8,
+              padding: '10px 16px',
+              marginTop: 12,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8,
+              cursor: 'pointer',
+              fontWeight: 700,
+            }}
+            onClick={() => {
+              setMobileOpen(false);
+              handleUserClick();
+            }}
+          >
+            <User size={18} />
+            <span>{user ? `My Account (${user.name || 'Maker'})` : 'Sign In / Register'}</span>
+          </button>
         </div>
       )}
     </header>

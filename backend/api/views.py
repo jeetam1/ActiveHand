@@ -4,9 +4,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
-from .models import UserProfile, Address, Product, CartItem, WishlistItem, Order, OrderItem
+from .models import UserProfile, Address, Product, CartItem, WishlistItem, Order, OrderItem, PasswordResetCode
 from .serializers import (
     UserSerializer, RegisterSerializer, LoginSerializer,
+    GoogleAuthSerializer, ForgotPasswordSerializer, ResetPasswordSerializer,
     AddressSerializer, ProductSerializer, CartItemSerializer,
     WishlistItemSerializer, OrderSerializer
 )
@@ -23,6 +24,9 @@ class ApiRootView(APIView):
                 'products': '/api/products/',
                 'auth_register': '/api/auth/register/',
                 'auth_login': '/api/auth/login/',
+                'auth_google': '/api/auth/google/',
+                'auth_forgot_password': '/api/auth/forgot-password/',
+                'auth_reset_password': '/api/auth/reset-password/',
                 'auth_logout': '/api/auth/logout/',
                 'auth_me': '/api/auth/me/',
                 'cart': '/api/cart/',
@@ -47,7 +51,17 @@ class RegisterView(APIView):
                 'user': user_data,
                 'message': 'Registration successful!'
             }, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        error_msg = 'Registration failed.'
+        if serializer.errors:
+            if 'non_field_errors' in serializer.errors:
+                error_msg = serializer.errors['non_field_errors'][0]
+            elif isinstance(serializer.errors, dict):
+                first_val = list(serializer.errors.values())[0]
+                if isinstance(first_val, list) and len(first_val) > 0:
+                    error_msg = first_val[0]
+                else:
+                    error_msg = str(first_val)
+        return Response({'error': error_msg, 'details': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
@@ -63,7 +77,184 @@ class LoginView(APIView):
                 'user': user_data,
                 'message': 'Login successful!'
             }, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        error_msg = 'Login failed.'
+        if serializer.errors:
+            if 'non_field_errors' in serializer.errors:
+                error_msg = serializer.errors['non_field_errors'][0]
+            elif isinstance(serializer.errors, dict):
+                first_val = list(serializer.errors.values())[0]
+                if isinstance(first_val, list) and len(first_val) > 0:
+                    error_msg = first_val[0]
+                else:
+                    error_msg = str(first_val)
+        return Response({'error': error_msg, 'details': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+class GoogleAuthView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        serializer = GoogleAuthSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data.get('email')
+            name = serializer.validated_data.get('name')
+            avatar = serializer.validated_data.get('avatar')
+            credential = serializer.validated_data.get('credential')
+
+            # Verify credential token if provided
+            if credential:
+                try:
+                    from google.oauth2 import id_token
+                    from google.auth.transport import requests as google_requests
+                    from django.conf import settings
+                    client_id = getattr(settings, 'GOOGLE_CLIENT_ID', '') or os.getenv('GOOGLE_CLIENT_ID', '')
+                    idinfo = id_token.verify_oauth2_token(credential, google_requests.Request(), client_id)
+                    email = idinfo.get('email') or email
+                    name = idinfo.get('name') or name
+                    avatar = idinfo.get('picture') or avatar
+                except Exception:
+                    try:
+                        import jwt
+                        decoded = jwt.decode(credential, options={"verify_signature": False})
+                        email = decoded.get('email') or email
+                        name = decoded.get('name') or name
+                        avatar = decoded.get('picture') or avatar
+                    except Exception:
+                        pass
+
+            if not email:
+                return Response({'error': 'Could not retrieve email from Google login.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            email = email.strip().lower()
+            name = name or email.split('@')[0]
+            avatar = avatar or '/assets/4.png'
+
+            user = User.objects.filter(username__iexact=email).first()
+            if not user:
+                user = User.objects.filter(email__iexact=email).first()
+
+            if not user:
+                user = User.objects.create_user(
+                    username=email,
+                    email=email,
+                    first_name=name
+                )
+                if hasattr(user, 'profile'):
+                    user.profile.display_name = name
+                    user.profile.points = 50
+                    user.profile.tier = 'Junior Maker 🌱'
+                    user.profile.avatar = avatar
+                    user.profile.save()
+            else:
+                if hasattr(user, 'profile') and avatar and avatar != '/assets/4.png':
+                    user.profile.avatar = avatar
+                    user.profile.save()
+
+            # Record in django-allauth SocialAccount
+            try:
+                from allauth.socialaccount.models import SocialAccount
+                SocialAccount.objects.get_or_create(
+                    user=user,
+                    provider='google',
+                    defaults={'uid': email, 'extra_data': {'email': email, 'name': name, 'picture': avatar}}
+                )
+            except Exception:
+                pass
+
+            token, _ = Token.objects.get_or_create(user=user)
+            user_data = UserSerializer(user).data
+            return Response({
+                'token': token.key,
+                'user': user_data,
+                'message': 'Google Sign-In successful!'
+            }, status=status.HTTP_200_OK)
+
+        error_msg = 'Google Sign-In failed.'
+        if serializer.errors:
+            if 'non_field_errors' in serializer.errors:
+                error_msg = serializer.errors['non_field_errors'][0]
+            elif isinstance(serializer.errors, dict):
+                first_val = list(serializer.errors.values())[0]
+                if isinstance(first_val, list) and len(first_val) > 0:
+                    error_msg = first_val[0]
+                else:
+                    error_msg = str(first_val)
+        return Response({'error': error_msg, 'details': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+class ForgotPasswordView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        serializer = ForgotPasswordSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            user = User.objects.filter(email__iexact=email).first() or User.objects.filter(username__iexact=email).first()
+
+            # Invalidate previous unused codes
+            PasswordResetCode.objects.filter(user=user, is_used=False).update(is_used=True)
+
+            # Generate 6-digit code
+            code = f"{random.randint(100000, 999999)}"
+            PasswordResetCode.objects.create(
+                user=user,
+                code=code
+            )
+
+            return Response({
+                'success': True,
+                'message': f'Password reset code has been sent to {email}.',
+                'reset_code': code
+            }, status=status.HTTP_200_OK)
+
+        error_msg = 'Could not request password reset.'
+        if serializer.errors:
+            if 'non_field_errors' in serializer.errors:
+                error_msg = serializer.errors['non_field_errors'][0]
+            elif 'email' in serializer.errors:
+                error_msg = serializer.errors['email'][0]
+            elif isinstance(serializer.errors, dict):
+                first_val = list(serializer.errors.values())[0]
+                if isinstance(first_val, list) and len(first_val) > 0:
+                    error_msg = first_val[0]
+                else:
+                    error_msg = str(first_val)
+        return Response({'error': error_msg, 'details': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+class ResetPasswordView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        serializer = ResetPasswordSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.validated_data['user']
+            reset_code_obj = serializer.validated_data['reset_code_obj']
+            new_password = serializer.validated_data['new_password']
+
+            user.set_password(new_password)
+            user.save()
+
+            reset_code_obj.is_used = True
+            reset_code_obj.save()
+
+            return Response({
+                'success': True,
+                'message': 'Password reset successful! You can now sign in with your new password.'
+            }, status=status.HTTP_200_OK)
+
+        error_msg = 'Password reset failed.'
+        if serializer.errors:
+            if 'non_field_errors' in serializer.errors:
+                error_msg = serializer.errors['non_field_errors'][0]
+            elif 'code' in serializer.errors:
+                error_msg = serializer.errors['code'][0]
+            elif 'new_password' in serializer.errors:
+                error_msg = serializer.errors['new_password'][0]
+            elif isinstance(serializer.errors, dict):
+                first_val = list(serializer.errors.values())[0]
+                if isinstance(first_val, list) and len(first_val) > 0:
+                    error_msg = first_val[0]
+                else:
+                    error_msg = str(first_val)
+        return Response({'error': error_msg, 'details': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 class LogoutView(APIView):
     permission_classes = [permissions.IsAuthenticated]

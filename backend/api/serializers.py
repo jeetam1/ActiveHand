@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
-from .models import UserProfile, Address, Product, CartItem, WishlistItem, Order, OrderItem
+from .models import UserProfile, Address, Product, CartItem, WishlistItem, Order, OrderItem, PasswordResetCode
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -114,11 +114,60 @@ class LoginSerializer(serializers.Serializer):
         if not user_obj and '@' in email_or_username:
             user_obj = User.objects.filter(email__iexact=email_or_username).select_related('profile').prefetch_related('addresses', 'orders__items').first()
 
-        if user_obj and user_obj.check_password(password):
-            data['user'] = user_obj
-            return data
+        if not user_obj:
+            raise serializers.ValidationError("No account found with this email. Please create an account first.")
 
-        raise serializers.ValidationError("Invalid email or password.")
+        if not user_obj.check_password(password):
+            raise serializers.ValidationError("Incorrect password. Please try again.")
+
+        data['user'] = user_obj
+        return data
+
+class GoogleAuthSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=False, allow_blank=True, default='')
+    name = serializers.CharField(max_length=150, required=False, allow_blank=True, default='')
+    avatar = serializers.CharField(max_length=500, required=False, allow_blank=True, default='')
+    google_id = serializers.CharField(max_length=255, required=False, allow_blank=True, default='')
+    credential = serializers.CharField(required=False, allow_blank=True, default='')
+
+    def validate(self, data):
+        if not data.get('email') and not data.get('credential'):
+            raise serializers.ValidationError("Either email or Google credential token is required.")
+        if data.get('email'):
+            data['email'] = data['email'].strip().lower()
+        return data
+
+class ForgotPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+    def validate_email(self, value):
+        email = value.strip().lower()
+        user = User.objects.filter(email__iexact=email).first() or User.objects.filter(username__iexact=email).first()
+        if not user:
+            raise serializers.ValidationError("No account found with this email. Please create an account first.")
+        return email
+
+class ResetPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    code = serializers.CharField(max_length=10)
+    new_password = serializers.CharField(write_only=True, min_length=4)
+
+    def validate(self, data):
+        email = data.get('email', '').strip().lower()
+        code = data.get('code', '').strip()
+        new_password = data.get('new_password', '')
+
+        user = User.objects.filter(email__iexact=email).first() or User.objects.filter(username__iexact=email).first()
+        if not user:
+            raise serializers.ValidationError("No account found with this email. Please create an account first.")
+
+        reset_code_obj = PasswordResetCode.objects.filter(user=user, code=code, is_used=False).order_by('-created_at').first()
+        if not reset_code_obj or not reset_code_obj.is_valid():
+            raise serializers.ValidationError("Invalid or expired reset code. Please request a new one.")
+
+        data['user'] = user
+        data['reset_code_obj'] = reset_code_obj
+        return data
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
