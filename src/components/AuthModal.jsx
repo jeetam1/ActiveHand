@@ -102,19 +102,6 @@ export default function AuthModal() {
             auto_select: false,
             cancel_on_tap_outside: true,
           });
-
-          const container = document.getElementById('google-signin-btn-container');
-          if (container) {
-            container.innerHTML = '';
-            window.google.accounts.id.renderButton(container, {
-              theme: 'outline',
-              size: 'large',
-              width: 380,
-              text: 'continue_with',
-              shape: 'rectangular',
-              logo_alignment: 'left',
-            });
-          }
         } catch (e) {
           console.warn('Google GSI init warning:', e);
         }
@@ -273,9 +260,7 @@ export default function AuthModal() {
         {/* Main Form for Login & Signup */}
         {authMode !== 'forgot_password' && (
           <div className="auth-form-body">
-            {/* Google Sign In Option */}
-            <div id="google-signin-btn-container" style={{ width: '100%', display: 'flex', justifyContent: 'center', marginBottom: 8 }} />
-
+            {/* Google Sign In Button */}
             <button
               type="button"
               className="auth-google-btn"
