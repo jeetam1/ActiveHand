@@ -1,4 +1,13 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? 'https://activehand.onrender.com/api' : 'http://localhost:8000/api');
+const getApiBaseUrl = () => {
+  let url = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? 'https://activehand.onrender.com/api' : 'http://localhost:8000/api');
+  url = url.trim().replace(/\/+$/, '');
+  if (!url.endsWith('/api')) {
+    url = `${url}/api`;
+  }
+  return url;
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 class ApiService {
   getToken() {
