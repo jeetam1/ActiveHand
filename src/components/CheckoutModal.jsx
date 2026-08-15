@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, CheckCircle, CreditCard, Smartphone, Truck, ShieldCheck, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
+import { X, CheckCircle, CreditCard, Smartphone, Truck, ShieldCheck, ArrowRight, Loader2, AlertCircle, LogIn } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
@@ -7,7 +7,7 @@ import '../styles/modals.css';
 
 export default function CheckoutModal({ isOpen, onClose }) {
   const { cart, subtotal, totalItems, clearCart } = useCart();
-  const { user, refreshUser } = useAuth();
+  const { user, openAuth, refreshUser } = useAuth();
   
   const [step, setStep] = useState(1); // 1: Shipping | 2: Payment | 3: Success
   const [payMethod, setPayMethod] = useState('upi');
@@ -30,6 +30,11 @@ export default function CheckoutModal({ isOpen, onClose }) {
   const handleNext = async (e) => {
     e.preventDefault();
     setErrorMessage('');
+
+    if (!user) {
+      setErrorMessage('Please sign in or create an account to complete checkout.');
+      return;
+    }
 
     if (step === 1) {
       setStep(2);
@@ -86,30 +91,54 @@ export default function CheckoutModal({ isOpen, onClose }) {
 
         {/* Body */}
         <div className="checkout-body">
-          {errorMessage && (
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-              padding: '10px 14px',
-              background: '#FFF5F5',
-              border: '1.5px solid #E53E3E',
-              borderRadius: 8,
-              color: '#C53030',
-              fontSize: '0.9rem',
-              marginBottom: 16,
-              fontFamily: 'var(--font-body)',
-            }}>
-              <AlertCircle size={18} style={{ flexShrink: 0 }} />
-              <span>{errorMessage}</span>
-            </div>
-          )}
-
-          {step === 1 && (
-            <form onSubmit={handleNext}>
-              <h3 style={{ fontFamily: 'var(--font-hand)', fontSize: '1.4rem', color: '#1A1A1A', marginBottom: 14 }}>
-                1. Delivery Address ({totalItems} Items)
+          {!user && step !== 3 ? (
+            <div style={{ textAlign: 'center', padding: '24px 12px' }}>
+              <img src="/assets/4.png" alt="Mascot" style={{ width: 84, height: 84, margin: '0 auto 16px', display: 'block' }} />
+              <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.4rem', color: '#1A1A1A', marginBottom: 8 }}>
+                Sign In Required to Checkout
               </h3>
+              <p style={{ color: '#4A5568', fontSize: '0.95rem', maxWidth: 360, margin: '0 auto 20px', lineHeight: 1.5 }}>
+                Please sign in or create an account to securely complete your order and earn 50 maker points!
+              </p>
+              <button
+                type="button"
+                className="checkout-next-btn"
+                style={{ maxWidth: 300, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+                onClick={() => {
+                  onClose();
+                  openAuth('login');
+                }}
+              >
+                <LogIn size={18} />
+                <span>SIGN IN / CREATE ACCOUNT</span>
+              </button>
+            </div>
+          ) : (
+            <>
+              {errorMessage && (
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  padding: '10px 14px',
+                  background: '#FFF5F5',
+                  border: '1.5px solid #E53E3E',
+                  borderRadius: 8,
+                  color: '#C53030',
+                  fontSize: '0.9rem',
+                  marginBottom: 16,
+                  fontFamily: 'var(--font-body)',
+                }}>
+                  <AlertCircle size={18} style={{ flexShrink: 0 }} />
+                  <span>{errorMessage}</span>
+                </div>
+              )}
+
+              {step === 1 && (
+                <form onSubmit={handleNext}>
+                  <h3 style={{ fontFamily: 'var(--font-hand)', fontSize: '1.4rem', color: '#1A1A1A', marginBottom: 14 }}>
+                    1. Delivery Address ({totalItems} Items)
+                  </h3>
 
               <div className="auth-form-group">
                 <label className="auth-label">Full Name</label>
@@ -283,6 +312,8 @@ export default function CheckoutModal({ isOpen, onClose }) {
                 CONTINUE EXPLORING
               </button>
             </div>
+          )}
+          </>
           )}
         </div>
       </div>

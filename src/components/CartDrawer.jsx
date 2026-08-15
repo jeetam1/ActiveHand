@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
-import { ShoppingBag, X, Plus, Minus, Trash2, ArrowRight, Sparkles } from 'lucide-react';
+import { ShoppingBag, X, Plus, Minus, Trash2, ArrowRight, Sparkles, Lock } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import '../styles/cart.css';
 
 export default function CartDrawer({ onNavigate, onOpenCheckout }) {
@@ -13,6 +14,7 @@ export default function CartDrawer({ onNavigate, onOpenCheckout }) {
     totalItems,
     subtotal,
   } = useCart();
+  const { user, openAuth } = useAuth();
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -38,6 +40,11 @@ export default function CartDrawer({ onNavigate, onOpenCheckout }) {
 
   const handleCheckout = () => {
     if (cart.length === 0) return;
+    if (!user) {
+      closeCart();
+      openAuth('login');
+      return;
+    }
     closeCart();
     onOpenCheckout?.();
   };
@@ -165,7 +172,7 @@ export default function CartDrawer({ onNavigate, onOpenCheckout }) {
             </div>
 
             <button className="cart-checkout-btn" onClick={handleCheckout}>
-              <span>PROCEED TO CHECKOUT</span>
+              <span>{user ? 'PROCEED TO CHECKOUT' : 'SIGN IN TO CHECKOUT'}</span>
               <ArrowRight size={20} />
             </button>
 

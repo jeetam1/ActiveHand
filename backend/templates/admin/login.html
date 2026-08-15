@@ -1,0 +1,208 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+  body.login {
+    background: #F8FAFC !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 100vh !important;
+    margin: 0 !important;
+    padding: 24px 16px !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  }
+
+  body.login #container {
+    width: 100% !important;
+    max-width: 400px !important;
+    min-width: unset !important;
+    background: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 14px !important;
+    box-shadow: 0 12px 30px -6px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.04) !important;
+    overflow: hidden !important;
+    margin: 0 auto !important;
+  }
+
+  body.login #header {
+    background: #00676A !important;
+    padding: 24px 20px 18px !important;
+    text-align: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-bottom: none !important;
+    gap: 4px;
+  }
+
+  body.login #branding {
+    margin: 0 !important;
+  }
+
+  body.login #branding h1 {
+    font-size: 1.4rem !important;
+    font-weight: 800 !important;
+    color: #FFFFFF !important;
+    margin: 0 !important;
+    letter-spacing: -0.3px;
+  }
+
+  body.login #branding h1 a {
+    color: #FFFFFF !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px;
+    text-decoration: none !important;
+  }
+
+  body.login .login-subtext {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.85);
+    margin-top: 2px;
+  }
+
+  body.login #content {
+    padding: 26px 28px !important;
+    background: #FFFFFF !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+
+  body.login #content-main {
+    width: 100% !important;
+  }
+
+  body.login .form-row {
+    padding: 10px 0 !important;
+    border: none !important;
+  }
+
+  body.login .form-row label {
+    display: block !important;
+    font-weight: 600 !important;
+    font-size: 0.875rem !important;
+    color: #1E293B !important;
+    margin-bottom: 6px !important;
+    float: none !important;
+    text-align: left !important;
+    width: 100% !important;
+  }
+
+  body.login .form-row input {
+    width: 100% !important;
+    padding: 10px 14px !important;
+    border: 1.5px solid #CBD5E1 !important;
+    border-radius: 8px !important;
+    background: #FFFFFF !important;
+    color: #0F172A !important;
+    font-size: 0.95rem !important;
+    box-sizing: border-box !important;
+    transition: all 0.15s ease !important;
+  }
+
+  body.login .form-row input:focus {
+    border-color: #00676A !important;
+    box-shadow: 0 0 0 3px rgba(0, 103, 106, 0.15) !important;
+    outline: none !important;
+    background: #FFFFFF !important;
+  }
+
+  body.login .submit-row {
+    padding: 18px 0 6px 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    text-align: center !important;
+  }
+
+  body.login .submit-row input[type=submit] {
+    width: 100% !important;
+    background: #00676A !important;
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    font-size: 1rem !important;
+    padding: 12px 16px !important;
+    border-radius: 8px !important;
+    border: none !important;
+    cursor: pointer !important;
+    box-shadow: 0 3px 6px rgba(0, 103, 106, 0.2) !important;
+    transition: all 0.15s ease !important;
+  }
+
+  body.login .submit-row input[type=submit]:hover {
+    background: #ED612B !important;
+    box-shadow: 0 4px 10px rgba(237, 97, 43, 0.28) !important;
+    transform: translateY(-1px);
+  }
+
+  body.login .errornote {
+    background: #FFF5F5 !important;
+    border: 1px solid #FEB2B2 !important;
+    color: #C53030 !important;
+    border-radius: 8px !important;
+    padding: 10px 14px !important;
+    font-size: 0.875rem !important;
+    margin: 0 0 16px 0 !important;
+  }
+
+  body.login .password-reset-link {
+    text-align: center;
+    margin-top: 14px;
+    font-size: 0.85rem;
+    color: #64748B;
+  }
+
+  body.login .password-reset-link a {
+    color: #00676A;
+    text-decoration: underline;
+    font-weight: 600;
+  }
+</style>
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} login{% endblock %}
+{% block usertools %}{% endblock %}
+{% block nav-global %}{% endblock %}
+{% block nav-sidebar %}{% endblock %}
+{% block content_title %}{% endblock %}
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+{% if form.errors and not form.non_field_errors %}
+<p class="errornote">
+{% if form.errors.items|length == 1 %}{% translate "Please correct the error below." %}{% else %}{% translate "Please correct the errors below." %}{% endif %}
+</p>
+{% endif %}
+
+{% if form.non_field_errors %}
+{% for error in form.non_field_errors %}
+<p class="errornote">
+    {{ error }}
+</p>
+{% endfor %}
+{% endif %}
+
+<div id="content-main">
+  <form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
+    <div class="form-row">
+      {{ form.username.errors }}
+      <label for="{{ form.username.id_for_label }}">{% translate 'Username or Email:' %}</label>
+      {{ form.username }}
+    </div>
+    <div class="form-row">
+      {{ form.password.errors }}
+      <label for="{{ form.password.id_for_label }}">{% translate 'Password:' %}</label>
+      {{ form.password }}
+      <input type="hidden" name="next" value="{{ next }}">
+    </div>
+    <div class="submit-row">
+      <input type="submit" value="{% translate 'Sign In to Admin' %}">
+    </div>
+  </form>
+</div>
+{% endblock %}

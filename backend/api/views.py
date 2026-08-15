@@ -446,10 +446,10 @@ class OrderListView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class CreateOrderView(APIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        user = request.user if request.user.is_authenticated else None
+        user = request.user
         data = request.data
 
         order_number = f"AH-{random.randint(10000, 99999)}"
