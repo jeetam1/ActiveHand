@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from .models import UserProfile, Address, Product, CartItem, WishlistItem, Order, OrderItem, PasswordResetCode
+from .notifications import send_order_notification
 from .serializers import (
     UserSerializer, RegisterSerializer, LoginSerializer,
     GoogleAuthSerializer, ForgotPasswordSerializer, ResetPasswordSerializer,
@@ -532,6 +533,9 @@ class CreateOrderView(APIView):
                     user.profile.tier = 'Master Crafter ⭐'
                 user.profile.save()
 
+        # Send instant notification to store owner (Telegram/Email/Discord)
+        send_order_notification(order, items)
+
         serializer = OrderSerializer(order)
         user_data = UserSerializer(user).data if user else None
 
@@ -716,6 +720,9 @@ class RazorpayVerifyPaymentView(APIView):
             elif user.profile.points >= 100:
                 user.profile.tier = 'Master Crafter ⭐'
             user.profile.save()
+
+        # Send instant notification to store owner (Telegram/Email/Discord)
+        send_order_notification(order, items)
 
         serializer = OrderSerializer(order)
         user_data = UserSerializer(user).data if user else None
