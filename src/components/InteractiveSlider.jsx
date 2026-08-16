@@ -94,7 +94,7 @@ export default function InteractiveSlider() {
         onClick={prevSlide}
         aria-label="Previous slide"
       >
-        <ChevronLeft size={38} />
+        <ChevronLeft size={26} />
       </button>
 
       <button 
@@ -102,7 +102,7 @@ export default function InteractiveSlider() {
         onClick={nextSlide}
         aria-label="Next slide"
       >
-        <ChevronRight size={38} />
+        <ChevronRight size={26} />
       </button>
 
       <div className="slider-dots">

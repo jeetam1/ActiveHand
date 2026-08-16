@@ -2,7 +2,6 @@ import React from 'react';
 import Hero from '../../components/Hero';
 import Features from '../../components/Features';
 import NewArrivals from '../../components/NewArrivals';
-import VideoSection from '../../components/VideoSection';
 import InteractiveSlider from '../../components/InteractiveSlider';
 import NewsletterBanner from '../../components/NewsletterBanner';
 
@@ -18,13 +17,10 @@ export default function HomePage({ onNavigate }) {
       {/* 3. Our Popular Kits (4 Taped Polaroid Cards Section) */}
       <NewArrivals onShopClick={() => onNavigate('shop')} />
 
-      {/* 4. Interactive Video: Kit in Action (Requires Login to Play) */}
-      <VideoSection />
-
-      {/* 5. Philosophy Carousel Slider */}
+      {/* 4. Philosophy Carousel Slider */}
       <InteractiveSlider />
 
-      {/* 6. Orange Banner ("Making Learning Seriously Fun!") & Newsletter Signup */}
+      {/* 5. Orange Banner ("Making Learning Seriously Fun!") & Newsletter Signup */}
       <NewsletterBanner />
     </main>
   );

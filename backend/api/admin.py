@@ -8,6 +8,7 @@ class ActiveHandAdminSite(admin.AdminSite):
     site_header = "ActiveHand Administration"
     site_title = "ActiveHand Admin"
     index_title = "Dashboard"
+    login_template = "admin/login.html"
 
     def index(self, request, extra_context=None):
         from django.contrib.auth.models import User
@@ -46,7 +47,7 @@ def format_admin_img(img_val, width=40, height=40, is_avatar=False):
     
     border_radius = "50%" if is_avatar else "6px"
     return format_html(
-        '<img src="{0}" onerror="this.onerror=null; this.src=\'{1}\';" style="width: {2}px; height: {3}px; border-radius: {4}; object-fit: cover; border: 1px solid #E2E8F0; background: #F8FAFC;" />',
+        '<img src="{0}" onerror="this.onerror=null; this.src=\'{1}\';" style="width: {2}px; height: {3}px; border-radius: {4}; object-fit: cover; border: 1px solid var(--border-subtle, #E2E8F0); background: var(--bg-subtle, #F8FAFC);" />',
         url,
         fallback,
         width,
@@ -129,8 +130,8 @@ class OrderAdmin(admin.ModelAdmin):
         clean_phone = obj.shipping_phone.replace(' ', '').replace('+', '').replace('-', '')
         return format_html(
             '<div>'
-            '<div style="font-weight:600; color:#0F172A;">{}</div>'
-            '<div style="font-size:0.8rem; color:#64748B;">{} &bull; {}, {}</div>'
+            '<div style="font-weight:600; color:var(--text-primary, #0F172A);">{}</div>'
+            '<div style="font-size:0.8rem; color:var(--text-secondary, #64748B);">{} &bull; {}, {}</div>'
             '</div>',
             obj.shipping_name,
             obj.shipping_phone,
