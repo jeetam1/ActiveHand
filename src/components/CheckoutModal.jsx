@@ -110,6 +110,9 @@ export default function CheckoutModal({ isOpen, onClose }) {
           throw new Error(rzpInit?.error || 'Failed to initiate Razorpay order.');
         }
 
+        // Clean phone number (10 digits) for Razorpay UPI/SMS auto-intent
+        const cleanPhone = (formData.phone || '').replace(/\D/g, '').slice(-10);
+
         const options = {
           key: rzpInit.key_id || import.meta.env.VITE_RAZORPAY_KEY_ID || '',
           amount: rzpInit.amount,
@@ -121,7 +124,39 @@ export default function CheckoutModal({ isOpen, onClose }) {
           prefill: {
             name: formData.name,
             email: user?.email || '',
-            contact: formData.phone || '',
+            contact: cleanPhone || '9876543210',
+          },
+          config: {
+            display: {
+              blocks: {
+                upi: {
+                  name: 'Pay via UPI / QR / GPay / PhonePe',
+                  instruments: [
+                    {
+                      method: 'upi',
+                    },
+                  ],
+                },
+                cards: {
+                  name: 'Cards & NetBanking',
+                  instruments: [
+                    {
+                      method: 'card',
+                    },
+                    {
+                      method: 'netbanking',
+                    },
+                    {
+                      method: 'wallet',
+                    },
+                  ],
+                },
+              },
+              sequence: payMethod === 'card' ? ['block.cards', 'block.upi'] : ['block.upi', 'block.cards'],
+              preferences: {
+                show_default_blocks: true,
+              },
+            },
           },
           notes: {
             address: formData.address,
