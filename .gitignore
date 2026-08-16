@@ -1,4 +1,4 @@
-# Node / Frontend
+# Node / Frontend Dependencies & Build Output
 node_modules/
 dist/
 dist-ssr/
@@ -12,6 +12,8 @@ __pycache__/
 *.so
 .Python
 env/
+venv/
+.venv/
 build/
 develop-eggs/
 downloads/
@@ -33,13 +35,27 @@ db.sqlite3
 staticfiles/
 media/
 
-# Environment Variables & Secrets
+# Environment Variables, Secrets & Keys (STRICTLY IGNORED)
 .env
 .env.*
+*.env
+!.env.example
 backend/.env
+backend/.env.*
+backend/*.env
+!backend/.env.example
 
-# IDE / OS
+# Credentials, Keys & Certificates
+*.pem
+*.key
+*.crt
+*.pfx
+*.p12
+
+# IDE & OS Specific
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
+*.swp
+*.swo

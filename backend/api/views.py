@@ -557,3 +557,173 @@ class AddressListCreateView(APIView):
             serializer.save(user=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# --- Razorpay Payment Gateway Integration ---
+import razorpay
+import hmac
+import hashlib
+from django.conf import settings
+
+def get_razorpay_client():
+    key_id = getattr(settings, 'RAZORPAY_KEY_ID', '')
+    key_secret = getattr(settings, 'RAZORPAY_KEY_SECRET', '')
+    return razorpay.Client(auth=(key_id, key_secret))
+
+class RazorpayCreateOrderView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        try:
+            numeric_total = float(request.data.get('numeric_total', 0.0) or 0.0)
+            if numeric_total <= 0:
+                return Response({'error': 'Order amount must be greater than 0.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            amount_in_paise = int(round(numeric_total * 100))
+            currency = request.data.get('currency', 'INR')
+            receipt_id = f"rcpt_{request.user.id}_{random.randint(1000, 99999)}"
+
+            client = get_razorpay_client()
+            razorpay_order = client.order.create({
+                'amount': amount_in_paise,
+                'currency': currency,
+                'receipt': receipt_id,
+                'payment_capture': 1,
+                'notes': {
+                    'user_id': str(request.user.id),
+                    'user_email': request.user.email or request.user.username,
+                    'customer_name': request.data.get('name', ''),
+                }
+            })
+
+            return Response({
+                'razorpay_order_id': razorpay_order['id'],
+                'amount': razorpay_order['amount'],
+                'currency': razorpay_order['currency'],
+                'key_id': getattr(settings, 'RAZORPAY_KEY_ID', ''),
+                'receipt': receipt_id
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({'error': f'Failed to initiate Razorpay order: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class RazorpayVerifyPaymentView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        data = request.data
+
+        razorpay_order_id = data.get('razorpay_order_id', '')
+        razorpay_payment_id = data.get('razorpay_payment_id', '')
+        razorpay_signature = data.get('razorpay_signature', '')
+
+        if not razorpay_order_id or not razorpay_payment_id or not razorpay_signature:
+            return Response({
+                'error': 'Missing Razorpay payment parameters (order_id, payment_id, signature).'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Verify signature using HMAC SHA256
+        key_secret = getattr(settings, 'RAZORPAY_KEY_SECRET', '')
+        generated_signature = hmac.new(
+            key_secret.encode('utf-8'),
+            f"{razorpay_order_id}|{razorpay_payment_id}".encode('utf-8'),
+            hashlib.sha256
+        ).hexdigest()
+
+        if not hmac.compare_digest(generated_signature, razorpay_signature):
+            return Response({
+                'error': 'Invalid Razorpay signature. Payment verification failed.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Signature verified successfully -> Record confirmed order
+        order_number = f"AH-{random.randint(10000, 99999)}"
+        total_amount = data.get('total_amount', '₹0.00')
+        numeric_total = float(data.get('numeric_total', 0.0) or 0.0)
+        shipping_name = data.get('name', '')
+        shipping_phone = data.get('phone', '')
+        shipping_address = data.get('address', '')
+        shipping_city = data.get('city', '')
+        shipping_pincode = data.get('pincode', '')
+        payment_method = data.get('payment_method', 'Razorpay (Online)')
+        items = data.get('items', [])
+
+        order = Order.objects.create(
+            user=user,
+            order_number=order_number,
+            total_amount=total_amount,
+            numeric_total=numeric_total,
+            status='Confirmed ✅',
+            shipping_name=shipping_name,
+            shipping_phone=shipping_phone,
+            shipping_address=shipping_address,
+            shipping_city=shipping_city,
+            shipping_pincode=shipping_pincode,
+            payment_method=payment_method,
+            razorpay_order_id=razorpay_order_id,
+            razorpay_payment_id=razorpay_payment_id,
+            razorpay_signature=razorpay_signature,
+            points_earned=50
+        )
+
+        for item in items:
+            if isinstance(item, dict):
+                p_id = item.get('id') or item.get('product_id')
+                p_title = item.get('title', 'DIY Kit')
+                p_price = str(item.get('price', '₹0.00'))
+                p_numeric = float(item.get('numericPrice', 0.0) or 0.0)
+                p_qty = int(item.get('quantity', 1))
+                p_img = item.get('img', '')
+            else:
+                p_id = None
+                p_title = str(item)
+                p_price = '₹0.00'
+                p_numeric = 0.0
+                p_qty = 1
+                p_img = ''
+
+            OrderItem.objects.create(
+                order=order,
+                product_id=p_id,
+                title=p_title,
+                price=p_price,
+                numeric_price=p_numeric,
+                quantity=p_qty,
+                img=p_img
+            )
+
+        # Clear user's DB cart
+        CartItem.objects.filter(user=user).delete()
+
+        # Save address if not already present
+        if shipping_address and shipping_pincode:
+            addr_exists = Address.objects.filter(user=user, pincode=shipping_pincode, address=shipping_address).exists()
+            if not addr_exists:
+                Address.objects.create(
+                    user=user,
+                    name=shipping_name or user.first_name or user.username,
+                    phone=shipping_phone,
+                    address=shipping_address,
+                    city=shipping_city,
+                    pincode=shipping_pincode,
+                    is_default=True
+                )
+
+        if hasattr(user, 'profile'):
+            user.profile.points += 50
+            if user.profile.points >= 200:
+                user.profile.tier = 'Legendary Artisan 🏆'
+            elif user.profile.points >= 100:
+                user.profile.tier = 'Master Crafter ⭐'
+            user.profile.save()
+
+        serializer = OrderSerializer(order)
+        user_data = UserSerializer(user).data if user else None
+
+        return Response({
+            'success': True,
+            'order': serializer.data,
+            'user': user_data,
+            'message': 'Payment successfully verified and order placed!'
+        }, status=status.HTTP_201_CREATED)
+

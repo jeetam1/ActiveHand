@@ -87,7 +87,12 @@ class ApiService {
     } catch (err) {
       console.error(`API Error on [${options.method || 'GET'} ${endpoint}]:`, err);
       if (err.name === 'TypeError' && err.message && err.message.toLowerCase().includes('fetch')) {
-        throw new Error('Cannot connect to backend server. The Render service may be starting up or sleeping. Please wait 15 seconds and try again.');
+        const isLocal = API_BASE_URL.includes('localhost') || API_BASE_URL.includes('127.0.0.1');
+        if (isLocal) {
+          throw new Error('Cannot connect to local backend server. Please ensure the Django backend server is running on port 8000 (python backend/manage.py runserver 8000).');
+        } else {
+          throw new Error('Cannot connect to backend server. The Render service may be starting up or sleeping. Please wait 15 seconds and try again.');
+        }
       }
       throw err;
     }
@@ -230,7 +235,7 @@ class ApiService {
     });
   }
 
-  // --- Orders ---
+  // --- Orders & Payments ---
   async getOrders() {
     if (!this.getToken()) return [];
     return await this.request('/orders/');
@@ -240,6 +245,20 @@ class ApiService {
     return await this.request('/orders/create/', {
       method: 'POST',
       body: JSON.stringify(orderData),
+    });
+  }
+
+  async createRazorpayOrder(payload) {
+    return await this.request('/razorpay/create-order/', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
+
+  async verifyRazorpayPayment(payload) {
+    return await this.request('/razorpay/verify-payment/', {
+      method: 'POST',
+      body: JSON.stringify(payload),
     });
   }
 

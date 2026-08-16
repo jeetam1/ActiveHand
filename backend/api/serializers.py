@@ -29,8 +29,8 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'order_number', 'total_amount', 'numeric_total', 'status',
             'shipping_name', 'shipping_phone', 'shipping_address', 'shipping_city',
-            'shipping_pincode', 'payment_method', 'points_earned', 'created_at',
-            'date_formatted', 'items', 'item_titles'
+            'shipping_pincode', 'payment_method', 'razorpay_order_id', 'razorpay_payment_id',
+            'points_earned', 'created_at', 'date_formatted', 'items', 'item_titles'
         ]
 
     def get_item_titles(self, obj):

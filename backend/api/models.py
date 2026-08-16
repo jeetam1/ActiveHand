@@ -108,6 +108,9 @@ class Order(models.Model):
     shipping_city = models.CharField(max_length=100)
     shipping_pincode = models.CharField(max_length=20)
     payment_method = models.CharField(max_length=50, default='upi')
+    razorpay_order_id = models.CharField(max_length=100, blank=True, null=True)
+    razorpay_payment_id = models.CharField(max_length=100, blank=True, null=True)
+    razorpay_signature = models.CharField(max_length=255, blank=True, null=True)
     points_earned = models.IntegerField(default=50)
     created_at = models.DateTimeField(auto_now_add=True)
 

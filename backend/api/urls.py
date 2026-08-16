@@ -7,7 +7,8 @@ from .views import (
     ProductListView, CartListView, AddToCartView, UpdateCartItemView,
     RemoveCartItemView, ClearCartView, SyncCartView,
     WishlistListView, ToggleWishlistView,
-    OrderListView, CreateOrderView, AddressListCreateView
+    OrderListView, CreateOrderView, AddressListCreateView,
+    RazorpayCreateOrderView, RazorpayVerifyPaymentView
 )
 
 urlpatterns = [
@@ -41,6 +42,11 @@ urlpatterns = [
     path('orders/', OrderListView.as_view(), name='order-list'),
     path('orders/create/', CreateOrderView.as_view(), name='order-create'),
 
+    # Razorpay Payment Gateway (Test Mode)
+    path('razorpay/create-order/', RazorpayCreateOrderView.as_view(), name='razorpay-create-order'),
+    path('razorpay/verify-payment/', RazorpayVerifyPaymentView.as_view(), name='razorpay-verify-payment'),
+
     # Addresses
     path('addresses/', AddressListCreateView.as_view(), name='address-list-create'),
 ]
+

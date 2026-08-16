@@ -13,15 +13,15 @@ ActiveHands backend is a robust REST API service powered by **Django REST Framew
 
 ## 🗄️ Database Setup (Supabase PostgreSQL)
 
-Your database credentials are configured in `backend/.env`:
+Your database credentials should be configured in `backend/.env`:
 
 ```env
 DB_HOST=aws-0-ap-south-1.pooler.supabase.com
 DB_PORT=5432
 DB_NAME=postgres
-DB_USER=postgres.cyikhhrsmnmvppmptyrp
-DB_PASSWORD=Aeiou@123456hello
-DATABASE_URL=postgresql://postgres.cyikhhrsmnmvppmptyrp:Aeiou%40123456hello@aws-0-ap-south-1.pooler.supabase.com:5432/postgres
+DB_USER=postgres.<your-project-id>
+DB_PASSWORD=<your-db-password>
+DATABASE_URL=postgresql://postgres.<your-project-id>:<your-db-password>@aws-0-ap-south-1.pooler.supabase.com:5432/postgres
 ```
 
 ---

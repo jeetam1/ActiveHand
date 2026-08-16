@@ -9,9 +9,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Load environment variables from .env
 load_dotenv(BASE_DIR / '.env')
 
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-activehands-craft-key-2026-supabase-db-984279412')
-
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
+
+SECRET_KEY = os.getenv('SECRET_KEY')
+if not SECRET_KEY:
+    if DEBUG:
+        SECRET_KEY = 'django-insecure-dev-only-fallback-key'
+    else:
+        raise ValueError("SECRET_KEY environment variable is required in production! Set SECRET_KEY in your hosting dashboard (e.g. Render).")
 
 ALLOWED_HOSTS = ['*']
 
@@ -172,3 +177,8 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
 ]
+
+# Razorpay Payment Gateway Configuration
+RAZORPAY_KEY_ID = os.getenv('RAZORPAY_KEY_ID', '')
+RAZORPAY_KEY_SECRET = os.getenv('RAZORPAY_KEY_SECRET', '')
+
